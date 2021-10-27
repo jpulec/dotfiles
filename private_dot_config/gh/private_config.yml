@@ -1,0 +1,2 @@
+aliases:
+    rpr: pr create --assignee @me --reviewer @IDKLabs/Engineering

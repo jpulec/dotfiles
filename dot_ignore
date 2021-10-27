@@ -1,0 +1,34 @@
+# Defaults
+coverage/
+bower_components/
+bundles/
+htmlcov/
+.vagrant
+.next
+node_modules/
+*.swp
+*.swo
+*package-lock.json*
+*yarn.lock*
+*tags*
+*.svg
+
+# Python
+.venv
+
+# JS/TS
+.yarn
+
+# Ignore how I do bare repos
+.bare
+
+# Ignore dist folders ALWAYS
+dist
+
+# Ignore python stuff
+*.pyc
+.mypy_cache
+__pycache__
+
+# Ignore ALL backup files. I never want to find those
+*.bak

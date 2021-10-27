@@ -1,0 +1,6 @@
+{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch")  -}}
+#!/bin/sh
+sudo pacman -S fish fisher fzf neovim powerline ripgrep tmux yay
+
+sudo yay -S tmux-plugin-manager
+{{ end -}}
