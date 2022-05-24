@@ -28,12 +28,12 @@ o.shiftwidth = 2
 o.expandtab = true
 
 -- Completion
-o.completeopt = 'menuone,noselect'
+o.completeopt = 'menu,menuone,noselect'
 o.pumblend = 10 -- Popup menu transparency
 o.pumheight = 8 -- Popup menu height
 
 -- Appearance
-o.colorcolumn = '80'
+o.colorcolumn = '80,120'
 o.cursorline = true
 o.cmdheight = 1
 

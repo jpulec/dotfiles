@@ -1,84 +1,75 @@
-return function() 
+return function()
 	local lsp = require 'lspconfig'
   local lsp_status = require 'lsp-status'
 	local lspfuzzy = require 'lspfuzzy'
 
   lsp_status.register_progress()
 
+  -- nvim-cmp supports additional completion capabilities
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
   local on_attach = require('modules.config.nvim-lspconfig.on-attach')
 
-	--lsp.pyls.setup {
-	--  on_attach = on_publish_diagnostics,
-	--  root_dir = lsp.util.root_pattern('pyproject.toml', '.git', vim.fn.getcwd()),
-	--  settings = {
-	--    pyls = {
-	--      plugins = {
-  --        autopep8 = {
-  --          enabled = false
-  --        },
-  --        pyflakes = {
-  --          enabled = false
-  --        },
-  --        pycodestyle = {
-  --          enabled = false
-  --        },
-  --        pylint = {
-  --          enabled = false
-  --        },
-  --        yapf = {
-  --          enabled = false
-  --        }
-	--      }
-	--    }
-	--  }
-	--}
+	lsp.pylsp.setup {
+	  on_attach = function (client)
+      client.resolved_capabilities.document_formatting = false
+      on_attach(client)
+    end,
+	  root_dir = lsp.util.root_pattern('pyproject.toml', '.git', vim.fn.getcwd()),
+	  settings = {
+      pylsp = {
+        plugins = {
+          autopep8 = {
+            enabled = false
+          },
+          jedi = {
+            environment = '/home/james/Dev/Resource/resource-worktree/bugfix/django/.venv/bin/python',
+          },
+          mypy = {
+            enabled = true
+          },
+          pyflakes = {
+            enabled = false
+          },
+          pycodestyle = {
+            enabled = true,
+            maxLineLength = 88,
+          },
+          pylint = {
+            enabled = true,
+            executable = '/home/james/Dev/Resource/resource-worktree/bugfix/django/.venv/bin/pylint',
+            args = {'--django-settings-module=guides.settings.dev'}
+          },
+          yapf = {
+            enabled = false
+          }
+        }
+      }
+	  }
+	}
+
 	lsp.tsserver.setup {
 	  on_attach = function (client)
       client.resolved_capabilities.document_formatting = false
       on_attach(client)
     end,
-	  cmd = { "typescript-language-server", "--tsserver-path", "./.yarn/sdks/typescript/bin/tsserver", "--stdio" },
-    capabilities = lsp_status.capabilities,
-	}
-  lsp.eslint.setup {}
-
-	local black = require "modules/config/nvim-lspconfig/efm/black"
-	local isort = require "modules/config/nvim-lspconfig/efm/isort"
-	local mypy = require "modules/config/nvim-lspconfig/efm/mypy"
-	local pylint = {
-	  lintCommand = "pylint",
-	  lintIgnoreExitCode = true,
-	  lintStdin = true
+	  cmd = { "typescript-language-server", "--tsserver-path=.yarn/sdks/typescript/lib/", "--stdio" },
+    capabilities = vim.tbl_extend('keep', capabilities, lsp_status.capabilities),
 	}
 
-	local prettier = require "modules/config/nvim-lspconfig/efm/prettier"
-	local eslint = require "modules/config/nvim-lspconfig/efm/eslint"
+  lsp.sumneko_lua.setup {
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }
+            }
+        }
+    }
+  }
 
-	local languages = {
-	  python = {black, isort, mypy},
+  lsp.tailwindcss.setup {}
 
-	  javascript = {prettier, eslint},
-	  javascriptreact = {prettier, eslint},
-
-	  typescript = {prettier, eslint},
-	  typescriptreact = {prettier, eslint},
-
-	  yaml = {prettier},
-	  json = {prettier},
-	  html = {prettier},
-	  scss = {prettier},
-	  css = {prettier},
-	  markdown = {prettier},
-	}
-
-	--lsp.efm.setup {
-	--  init_options = {documentFormatting = true, codeAction = true },
-	--  filetypes = vim.tbl_keys(languages),
-	--  settings = {
-	--    languages = languages,
-	--  },
-	--  on_attach = on_attach,
-	--}
 	lspfuzzy.setup {}
 
   local border = {

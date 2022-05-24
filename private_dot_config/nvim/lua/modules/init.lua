@@ -1,6 +1,11 @@
-vim.cmd([[autocmd BufWritePost plugins.lua source <afile> | PackerCompile]])
+vim.cmd([[
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+  augroup end
+]])
 
-return require('packer').startup(function()
+return require('packer').startup(function(use)
   -- Built-in lsp
   use({
       'neovim/nvim-lspconfig',
@@ -15,16 +20,25 @@ return require('packer').startup(function()
   }}
   -- Completion plugin
   use({
-      'hrsh7th/nvim-compe',
-      config = require('modules.config.nvim-compe'),
-      event = 'InsertEnter',
+      'hrsh7th/nvim-cmp',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lua',
+  })
+
+  -- Snippets
+  use({
+      'L3MON4D3/luasnip',
       requires = {
-          { 'ray-x/lsp_signature.nvim', module = 'lsp_signature' },
+          'rafamadriz/friendly-snippets',
       },
   })
+
   use {'arthurxavierx/vim-caser'}
   use {'chaoren/vim-wordmotion'}
-  use {'dracula/vim' } 
+  use {'dracula/vim' }
   use {'dag/vim-fish'}
   use {'jparise/vim-graphql'}
   use {'pantharshit00/vim-prisma'}
@@ -60,26 +74,11 @@ return require('packer').startup(function()
   })
   -- Statusline
   use({
-      'glepnir/galaxyline.nvim',
+      'NTBBloodbath/galaxyline.nvim',
       config = require('modules.config.galaxyline'),
       requires = {'kyazdani42/nvim-web-devicons', opt = true},
       branch = 'main',
   })
-  -- Snippets
-  use({
-      'hrsh7th/vim-vsnip',
-      requires = {
-          'rafamadriz/friendly-snippets',
-          'dsznajder/vscode-es7-javascript-react-snippets',
-      },
-      after = 'nvim-compe',
-  })
-
-  -- Remote container dev
-  use {'jamestthompson3/nvim-remote-containers'}
-
-  -- Zip file reading
-  use {'lbrayner/vim-rzip'}
 
   use ({
     "jose-elias-alvarez/null-ls.nvim",
@@ -87,6 +86,9 @@ return require('packer').startup(function()
       { "nvim-lua/plenary.nvim" },
       { "neovim/nvim-lspconfig"},
     },
-    config = require("modules.config.lsp.null-ls")
-  })
+    config = require("modules.config.lsp.null-ls")                                                                                                                                                             })
+
+  use {'github/copilot.vim'}
+
+  use { 'tpabla/markdown-preview.nvim', commit = '4ecfb49e92351d361c21b436ebebedfa56ae0c2d' }
 end)

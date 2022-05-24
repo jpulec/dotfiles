@@ -1,6 +1,7 @@
 [user]
 	name = "James Pulec"
   email = "jpulec@gmail.com"
+  signingkey = E6CD3D88F0502360
 
 [color]
 	diff = auto
@@ -38,6 +39,7 @@
   lga = log --graph --all
   push = push -u
   mt = mergetool
+  squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
 
 [diff]
   tool = vimdiff
@@ -48,6 +50,7 @@
 
 [merge]
   tool = fugitive
+  conflictStyle = zdiff3
 
 [mergetool "fugitive"]
   cmd  = "nvim -f -c \"Gvdiffsplit!\" \"$MERGED\""
@@ -60,6 +63,7 @@
 
 [commit]
   gpgsign = true
+	verbose = true
 
 [remote "origin"]
   prune = true

@@ -1,6 +1,6 @@
 if status --is-interactive
   powerline-daemon -q
-  set fish_function_path $fish_function_path "/usr/lib/python3.9/site-packages/powerline/bindings/fish"
+  set fish_function_path $fish_function_path "/usr/lib/python3.10/site-packages/powerline/bindings/fish"
   powerline-setup
 end
 
@@ -96,3 +96,5 @@ set -xg RIPGREP_CONFIG_PATH ~/.ripgreprc
 
 
 direnv hook fish | source
+
+# load_nvm
