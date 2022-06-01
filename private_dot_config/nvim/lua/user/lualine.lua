@@ -21,7 +21,7 @@ local diff = {
 	"diff",
 	colored = false,
 	symbols = { added = " ", modified = " ", removed = " " }, -- changes diff symbols
-  cond = hide_in_width
+	cond = hide_in_width,
 }
 
 local mode = {
@@ -65,10 +65,10 @@ end
 local lsp_status_ok, lsp_status = pcall(require, "lsp-status")
 
 local function lsp_status_segment()
-  if lsp_status_ok then
-    return lsp_status.status()
-  end
-  return ""
+	if lsp_status_ok then
+		return lsp_status.status()
+	end
+	return ""
 end
 
 lualine.setup({

@@ -2,7 +2,6 @@ local opts = { noremap = true, silent = true }
 
 local keymap = vim.api.nvim_set_keymap
 
-
 -- Remap the leader key as space
 keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = " "
@@ -31,15 +30,18 @@ keymap("n", "<leader>n", ":bnext<cr>", opts)
 keymap("n", "<leader>p", ":bprev<cr>", opts)
 
 -- Telescope
-keymap("n", "<leader>f", "<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>", opts)
-keymap("n", "<leader>t", "<cmd>Telescope live_grep<cr>", opts)
+keymap(
+	"n",
+	"<leader>t",
+	"<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>",
+	opts
+)
+keymap("n", "<leader>f", "<cmd>Telescope live_grep<cr>", opts)
 
 -- Nvimtree
 keymap("n", "<leader>e", ":NvimTreeToggle<cr>", opts)
 
-
 -- Insert --
-
 
 -- Visual --
 -- Stay in indent mode
@@ -52,7 +54,6 @@ keymap("v", "<A-k>", ":m .-2<CR>==", opts)
 
 -- Don't replace unnamed register with replaced text
 keymap("v", "p", '"_dP', opts)
-
 
 -- Visual Block --
 -- Move text up and down
