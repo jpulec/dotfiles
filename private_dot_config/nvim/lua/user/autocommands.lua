@@ -1,10 +1,13 @@
-vim.cmd [[
+vim.cmd([[
   augroup _general_settings
     autocmd!
     autocmd FileType qf,help,man,lspinfo nnoremap <silent> <buffer> q :close<CR> 
     autocmd TextYankPost * silent!lua require('vim.highlight').on_yank({higroup = 'Search', timeout = 200}) 
     autocmd BufWinEnter * :set formatoptions-=cro
     autocmd FileType qf set nobuflisted
+    autocmd FileType man setl laststatus=0 noruler
+    autocmd FileType vim,css,javascript,sh,zsh setl sw=2
+    autocmd TermOpen term://* setl nornu nonu nocul so=0 scl=no
   augroup end
   augroup _git
     autocmd!
@@ -28,14 +31,4 @@ vim.cmd [[
     autocmd!
     autocmd BufWritePre * lua vim.lsp.buf.formatting_sync()
   augroup end
-  augroup ftplugin
-    au!
-    au FileType man setl laststatus=0 noruler
-    au FileType vim,css,javascript,sh,zsh setl sw=2
-    au TermOpen term://* setl nornu nonu nocul so=0 scl=no
-  augroup END
-  augroup highlight_yank
-    au!
-    au TextYankPost * silent! lua vim.highlight.on_yank { timeout = 150 }
-  augroup END
-]]
+]])

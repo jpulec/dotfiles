@@ -28,6 +28,7 @@ keymap("n", "<space>bd", "<cmd>bd<CR>", opts)
 -- Leader Buffer mappings
 keymap("n", "<leader>n", ":bnext<cr>", opts)
 keymap("n", "<leader>p", ":bprev<cr>", opts)
+keymap("n", "<leader>bd", ":bprev|bd<cr>", opts)
 
 -- Telescope
 keymap(
