@@ -20,7 +20,7 @@ o.relativenumber = true
 -- Enable Spell checking
 o.spell = true
 o.spelllang = "en"
-o.spellfile = "~/.config/nvim/spell/en.utf-8.add"
+o.spellfile = vim.fn.expand("~") .. "/.config/nvim/spell/en.utf-8.add"
 
 -- Tab handling
 o.tabstop = 2
