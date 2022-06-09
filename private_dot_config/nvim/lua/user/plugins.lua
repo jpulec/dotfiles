@@ -72,6 +72,7 @@ return packer.startup(function(use)
 	use("p00f/nvim-ts-rainbow")
 
 	use("github/copilot.vim")
+	use("hrsh7th/cmp-copilot")
 
 	use("arthurxavierx/vim-caser")
 	use("chaoren/vim-wordmotion")
@@ -85,6 +86,4 @@ return packer.startup(function(use)
 	-- Git
 	use("lewis6991/gitsigns.nvim")
 	use("tpope/vim-fugitive")
-
-	-- Setup nvim-cmp.
 end)
