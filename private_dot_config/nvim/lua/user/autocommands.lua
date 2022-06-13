@@ -31,4 +31,8 @@ vim.cmd([[
     autocmd!
     autocmd BufWritePre * lua vim.lsp.buf.formatting_sync()
   augroup end
+  augroup _eslint_d_close
+    autocmd!
+    autocmd VimLeave * eslint_d stop
+  augroup end
 ]])
