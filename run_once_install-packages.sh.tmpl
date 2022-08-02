@@ -2,9 +2,31 @@
 #!/bin/sh
 
 # Install yay manually
-sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay
+sudo pacman -S --needed git base-devel \
+  && git clone https://aur.archlinux.org/yay.git \
+  && cd yay \
+  && makepkg -si \
+  && cd .. \
+  && rm -rf yay
 
-sudo pacman -S fish fisher fzf neovim powerline ripgrep tmux
+sudo pacman -S \
+  direnv \
+  fish \
+  fisher \
+  fzf \
+  github-cli \
+  neovim \
+  nerd-fonts-complete \
+  npm \
+  powerline \
+  ripgrep \
+  tmux \
+  typescript \
+  yarn
 
-yay -S tmux-plugin-manager nvim-packer-git
+yay -S \
+  nvim-packer-git \
+  tailwind-language-server \
+  tmux-plugin-manager \
+  vscode-json-languageserver
 {{ end -}}
