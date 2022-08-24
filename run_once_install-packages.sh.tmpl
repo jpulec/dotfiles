@@ -26,10 +26,15 @@ sudo pacman -S \
   yarn
 
 yay -S \
+  eslint_d \
   nerd-fonts-complete \
   nvim-packer-git \
+  prettier_d_slim \
   tailwindcss-language-server \
   tmux-plugin-manager-git \
   typescript-language-server \
   vscode-json-languageserver
+
+# Bootstrap packer plugins
+nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 {{ end -}}
