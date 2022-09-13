@@ -12,17 +12,9 @@ local code_actions = null_ls.builtins.code_actions
 
 null_ls.setup({
 	sources = {
-		formatting.prettier_d_slim.with({
-			extra_args = { "--prettier-path", "./.yarn/sdks/prettier" },
-		}),
-		diagnostics.eslint_d.with({
-			-- There's an issue with core_d where it tries to run from first manifest file as current directory.
-			extra_args = { "--eslint-path", "../../.yarn/sdks/eslint" },
-		}),
-		code_actions.eslint_d.with({
-			-- There's an issue with core_d where it tries to run from first manifest file as current directory.
-			extra_args = { "--eslint-path", "../../.yarn/sdks/eslint" },
-		}),
+		formatting.prettier_d_slim,
+		diagnostics.eslint_d,
+		code_actions.eslint_d,
 		formatting.stylua,
 	},
 })

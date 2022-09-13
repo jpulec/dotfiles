@@ -97,4 +97,6 @@ set -xg RIPGREP_CONFIG_PATH ~/.ripgreprc
 
 direnv hook fish | source
 
-# load_nvm
+set -xg SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.socket"
+
+set -x GPG_TTY (tty)

@@ -71,9 +71,6 @@ return packer.startup(function(use)
 	})
 	use("p00f/nvim-ts-rainbow")
 
-	use("github/copilot.vim")
-	use("hrsh7th/cmp-copilot")
-
 	use("arthurxavierx/vim-caser")
 	use("chaoren/vim-wordmotion")
 	use("dag/vim-fish")
