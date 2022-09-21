@@ -19,9 +19,6 @@ node_modules/
 # JS/TS
 .yarn
 
-# Ignore how I do bare repos
-.bare
-
 # Ignore dist folders ALWAYS
 dist
 

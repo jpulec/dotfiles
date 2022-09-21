@@ -42,7 +42,7 @@
   squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
 
 [diff]
-  tool = vimdiff
+  tool = nvim -d
   algorithm = patience
 
 [diff "nodiff"]
@@ -65,10 +65,11 @@
   gpgsign = true
 	verbose = true
 
-[remote "origin"]
-  prune = true
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+
+[init]
+  defaultBranch = main

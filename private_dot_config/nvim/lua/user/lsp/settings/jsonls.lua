@@ -166,6 +166,11 @@ local schemas = {
     fileMatch = { "resume.json" },
     url = "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   },
+  {
+    description = "Turborepo",
+    fileMatch = { "turbo.json" },
+    url = "https://turborepo.org/schema.json"
+  },
 }
 
 local function extend(tab1, tab2)
