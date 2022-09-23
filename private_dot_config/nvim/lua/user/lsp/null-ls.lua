@@ -12,7 +12,7 @@ local code_actions = null_ls.builtins.code_actions
 
 null_ls.setup({
 	sources = {
-		formatting.prettier_d_slim,
+		--formatting.prettier_d_slim,
 		diagnostics.eslint_d,
 		code_actions.eslint_d,
 		formatting.stylua,
