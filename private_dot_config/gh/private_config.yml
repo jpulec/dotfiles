@@ -1,3 +1,4 @@
 aliases:
-    rpr: pr create --assignee @me --reviewer @Create-Inc/creators
-    rprd: pr create --assignee @me --draft
+  rp: pr create --assignee @me
+  rpr: pr create --assignee @me --reviewer @Create-Inc/creators
+  rprd: pr create --assignee @me --draft

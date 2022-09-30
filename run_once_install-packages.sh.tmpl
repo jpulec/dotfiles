@@ -28,14 +28,20 @@ sudo pacman -S \
   xdg-user-dirs
 
 yay -S \
+  bash-language-server \
+  dockerfile-language-server \
   eslint_d \
   kanshi \
+  lua-language-server \
   nvim-packer-git \
-  prettier_d_slim \
+  prettierd \
+  sql-language-server \
   tailwindcss-language-server \
   tmux-plugin-manager-git \
   typescript-language-server \
-  vscode-json-languageserver
+  vscode-html-languageserver \
+  vscode-json-languageserver \
+  yaml-language-server
 
 # Bootstrap packer plugins
 nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'

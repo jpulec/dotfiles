@@ -171,6 +171,13 @@ local schemas = {
     fileMatch = { "turbo.json" },
     url = "https://turborepo.org/schema.json"
   },
+  {
+    description = "Github Actions",
+    fileMatch = {
+      ".github/workflows/**.yml"
+    },
+    url = "https://json.schemastore.org/github-workflow.json"
+  }
 }
 
 local function extend(tab1, tab2)

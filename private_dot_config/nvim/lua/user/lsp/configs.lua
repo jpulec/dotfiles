@@ -1,11 +1,17 @@
 local lspconfig = require("lspconfig")
 
 local servers = {
-  "tsserver",
+  "bashls",
+  "dockerls",
+  "html",
   "jsonls",
+  "pylsp",
+  "sqlls",
   "sumneko_lua",
   "tailwindcss",
-  "pylsp"
+  "terraformls",
+  "tsserver",
+  "yamlls",
 }
 
 for _, server in pairs(servers) do
