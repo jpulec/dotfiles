@@ -6,6 +6,7 @@ end
 
 set -gx EDITOR nvim
 set -gx PATH ~/.gem/ruby/2.5.0/bin $PATH
+set -gx PATH ~/.npm-global/bin $PATH
 # set -gx PATH ~/.config/fnm/bin $PATH
 
 # set -gx PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
