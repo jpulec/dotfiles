@@ -103,6 +103,7 @@ cmp.setup({
 			vim_item.menu = ({
 				copilot = "[COPILOT]",
 				nvim_lsp = "[LSP]",
+				emoji = "[😄]",
 				nvim_lua = "[NVIM_LUA]",
 				luasnip = "[Snippet]",
 				buffer = "[Buffer]",
@@ -114,6 +115,7 @@ cmp.setup({
 	sources = {
 		{ name = "copilot" },
 		{ name = "nvim_lsp" },
+		{ name = "emoji" },
 		{ name = "nvim_lua" },
 		{ name = "luasnip" },
 		{ name = "buffer" },

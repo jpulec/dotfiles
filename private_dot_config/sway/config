@@ -18,17 +18,19 @@ set $term foot
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu bemenu-run --no-exec | xargs swaymsg exec --
+
+# Make launcher window floating and sticky
+for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
+set $menu exec $term --app-id=launcher sway-launcher-desktop
 
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-#output eDP-1 scale 1.5
-#
-#output DP-6 pos 0 0 res 1920x1080
-#output DP-5 pos 1920 0 res 1920x1080
-#output eDP-1 pos 3840 0 
+
+#output DP-7 pos 0 0 res 1920x1080@60Hz
+#output DP-8 pos 1920 0 res 1920x1080@60Hz
+#output eDP-1 pos 3840 0 scale 1.5
 
 # Example configuration:
 #
@@ -220,6 +222,16 @@ bindsym --locked XF86AudioNext exec playerctl next
 bindsym --locked XF86AudioPrev exec playerctl previous
 bindsym XF86Search exec $menu
 
+bindsym Print exec grim - | wl-copy
+bindsym Shift+Print exec grim -g "$(slurp)" - | wl-copy
+
+
+set $screenrecord wf-recorder -g "$(slurp)" -f ~/screencasts/mov-$(date +"%Y-%m-%d--%H-%M-%S.mp4")
+bindsym Shift+Control+F6 exec $screenrecord
+bindsym Ctrl+Shift+BackSpace exec killall -s SIGINT wf-recorder
+
+#bindsym Pause exec wf-recorder -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused).name') | wl-copy
+#bindsym Shift+Pause exec wf-recorder -g "$(slurp) | wl-copy
 
 #
 # Status Bar:
@@ -243,7 +255,6 @@ bar swaybar_command waybar
 
 include /etc/sway/config.d/*
 
-exec_always pkill kanshi; exec kanshi
+exec_always "pkill kanshi; kanshi"
 
 exec wl-paste -t text --watch clipman store --no-persist
-

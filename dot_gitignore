@@ -82,3 +82,6 @@ tags.temp
 
 # Merge original files
 *.orig
+
+# For now, ignore these since other people don't use them
+.envrc

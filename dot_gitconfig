@@ -29,8 +29,9 @@
   attributesfile = ~/.gitattributes
 
 [alias]
-	co = checkout
-	ci = commit
+  co = checkout
+  cl = clean -xd -e .envrc -e .env.development.local
+  ci = commit
 	st = status
   df = diff
   dfdp = diff --no-ext-diff
@@ -38,7 +39,11 @@
   lg = log --graph --all --oneline
   lga = log --graph --all
   push = push -u
+  pushf = push --force-with-lease --force-if-includes
+  sw = switch
+  rs = restore
   mt = mergetool
+  wt = worktree
   squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
 
 [diff]

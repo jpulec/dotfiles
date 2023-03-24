@@ -23,12 +23,12 @@ keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
 -- Buffers
 keymap("n", "<Tab>", "<cmd>bn<CR>", opts)
 keymap("n", "<S-Tab>", "<cmd>bp<CR>", opts)
-keymap("n", "<space>bd", "<cmd>bd<CR>", opts)
+--keymap("n", "<space>bd", "<cmd>bd<CR>", opts)
 
 -- Leader Buffer mappings
 keymap("n", "<leader>n", ":bnext<cr>", opts)
 keymap("n", "<leader>p", ":bprev<cr>", opts)
-keymap("n", "<leader>bd", ":bprev|bd<cr>", opts)
+keymap("n", "<leader>bd", ":bprev|bd #<cr>", opts)
 
 -- Telescope
 keymap(

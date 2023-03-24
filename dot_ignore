@@ -29,3 +29,7 @@ __pycache__
 
 # Ignore ALL backup files. I never want to find those
 *.bak
+
+# Create stuff
+apps/cli/lib/
+apps/gh-app/lib/

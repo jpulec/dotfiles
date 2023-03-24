@@ -11,6 +11,9 @@ set -gx PATH ~/.npm-global/bin $PATH
 
 # set -gx PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
+# Alias sudo so that aliases work
+alias sudo='sudo '
+
 # Processes aliases
 alias psa="ps aux"
 alias psg="ps aux | grep "
@@ -34,6 +37,7 @@ alias gcian='git commit -an'
 alias gamend='git commit --amend'
 alias gco='git checkout'
 alias gcob='git checkout -b'
+alias gswn='git -c core.hooksPath=/dev/null switch'
 alias gdf='git diff'
 alias gbr='git branch'
 alias gbra='git branch -a'
@@ -77,11 +81,12 @@ alias dcl="docker-compose logs -f"
 alias dcoup="docker-compose up -d"
 alias dcor="docker-compose run --rm"
 alias dcoru="docker-compose run --rm --user (id -u):(id -g)"
+alias dstop="docker ps --format '{{.ID}}' | xargs docker stop"
 
 alias docker-compose="docker compose"
 
 # Set ripgrep as default for FZF
-set -gx FZF_DEFAULT_COMMAND 'rg --files --no-ignore-vcs --hidden'
+set -gx FZF_DEFAULT_COMMAND 'rg --files --hidden'
 
 #eval (dircolors -c ~/.dircolors/dircolors.ansi-dark)
 
@@ -101,3 +106,11 @@ direnv hook fish | source
 set -xg SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 set -x GPG_TTY (tty)
+
+
+# Auto set using nvmrc
+function __nvm_auto --on-variable PWD
+  nvm use --silent 2>/dev/null
+end
+__nvm_auto
+

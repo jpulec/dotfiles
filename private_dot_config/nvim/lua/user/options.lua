@@ -60,3 +60,7 @@ o.shortmess:append("c")
 o.iskeyword:append("-")
 
 o.virtualedit = "block"
+
+-- Folding
+o.foldmethod = "expr"
+o.foldexpr = "nvim_treesitter#foldexpr()"

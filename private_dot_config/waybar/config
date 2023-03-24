@@ -15,6 +15,7 @@
   ],
   "modules-right": [
     //"mpd",
+    "recorder",
     "idle_inhibitor",
     "pulseaudio",
     "network",
@@ -201,5 +202,12 @@
     "escape": true,
     "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
     // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
-  }
+  },
+  "custom/recorder": {
+		"format": "",
+		"return-type": "json",
+		"interval": 1,
+		"exec": "echo '{\"class\": \"recording\"}'",
+		"exec-if": "pgrep wf-recorder"
+	}
 }

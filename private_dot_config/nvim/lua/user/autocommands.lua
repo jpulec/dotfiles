@@ -8,6 +8,7 @@ vim.cmd([[
     autocmd FileType man setl laststatus=0 noruler
     autocmd FileType vim,css,javascript,sh,zsh setl sw=2
     autocmd TermOpen term://* setl nornu nonu nocul so=0 scl=no
+    autocmd BufReadPost,FileReadPost * normal zR
   augroup end
   augroup _git
     autocmd!
