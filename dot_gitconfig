@@ -1,7 +1,7 @@
 [user]
 	name = "James Pulec"
   email = "jpulec@gmail.com"
-  signingkey = E6CD3D88F0502360
+  signingkey = 9E8ED07CC1CBBF56
 
 [color]
 	diff = auto
