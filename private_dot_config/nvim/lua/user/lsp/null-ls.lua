@@ -25,5 +25,6 @@ null_ls.setup({
 				diagnostic.severity = vim.diagnostic.severity["WARN"]
 			end,
 		}),
+		require("typescript.extensions.null-ls.code-actions"),
 	},
 })

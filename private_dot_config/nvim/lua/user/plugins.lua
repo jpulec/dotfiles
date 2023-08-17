@@ -25,8 +25,8 @@ return packer.startup(function(use)
 	use("nvim-lua/plenary.nvim")
 	use("windwp/nvim-autopairs") -- Autopairs, integrates with both cmp and treesitter
 	use("numToStr/Comment.nvim") -- Easily comment stuff
-	use("kyazdani42/nvim-web-devicons")
-	use("kyazdani42/nvim-tree.lua")
+	use("nvim-tree/nvim-web-devicons")
+	use("nvim-tree/nvim-tree.lua")
 	use("akinsho/bufferline.nvim")
 	use("moll/vim-bbye")
 	use("nvim-lualine/lualine.nvim")
@@ -77,7 +77,7 @@ return packer.startup(function(use)
 		"nvim-treesitter/nvim-treesitter",
 		run = ":TSUpdate",
 	})
-	use("p00f/nvim-ts-rainbow")
+	use("HiPhish/nvim-ts-rainbow2")
 
 	use("arthurxavierx/vim-caser")
 	use("chaoren/vim-wordmotion")
@@ -116,4 +116,11 @@ return packer.startup(function(use)
 	})
 
 	use({ "axieax/urlview.nvim" })
+
+	use({ "jose-elias-alvarez/typescript.nvim" })
+
+	use({ "tpope/vim-abolish" })
+
+	--- Remote dev stuff
+	use({ "https://codeberg.org/esensar/nvim-dev-container" })
 end)

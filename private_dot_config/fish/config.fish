@@ -94,11 +94,14 @@ set -g -x COMPOSE_HTTP_TIMEOUT 200
 
 set -g -x PIPENV_VENV_IN_PROJECT 1
 
-set pipenv_fish_fancy yes 
+set pipenv_fish_fancy yes
 
 set -xg LOCAL_TUNNEL https://jpulec.ngrok.io
 
 set -xg RIPGREP_CONFIG_PATH ~/.ripgreprc
+
+# Bat stuff
+set -xg BAT_THEME Dracula
 
 
 direnv hook fish | source

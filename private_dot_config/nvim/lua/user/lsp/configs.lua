@@ -1,4 +1,5 @@
 local lspconfig = require("lspconfig")
+local typescript_status_ok, typescript = pcall(require, "typescript")
 
 local servers = {
 	"bashls",
@@ -10,9 +11,9 @@ local servers = {
 	"lua_ls",
 	"tailwindcss",
 	"terraformls",
-	"tsserver",
 	"yamlls",
 	"prismals",
+	"rust_analyzer",
 }
 
 for _, server in pairs(servers) do
@@ -25,4 +26,16 @@ for _, server in pairs(servers) do
 		opts = vim.tbl_deep_extend("force", server_custom_opts, opts)
 	end
 	lspconfig[server].setup(opts)
+end
+
+if typescript_status_ok then
+	typescript.setup({
+		go_to_source_defintion = {
+			fallback = true,
+		},
+		server = {
+			on_attach = require("user.lsp.handlers").on_attach,
+			capabilities = require("user.lsp.handlers").capabilities,
+		},
+	})
 end

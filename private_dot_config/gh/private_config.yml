@@ -1,5 +1,6 @@
 aliases:
   rp: pr create --assignee @me
   rpr: pr create --assignee @me --reviewer @Create-Inc/reviewers
+  rprc: pr create --assignee @me --reviewer @Create-Inc/reviewers
   rprd: pr create --assignee @me --draft
   mp: pr merge --auto --squash --delete-branch

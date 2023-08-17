@@ -64,3 +64,5 @@ o.virtualedit = "block"
 -- Folding
 o.foldmethod = "expr"
 o.foldexpr = "nvim_treesitter#foldexpr()"
+
+o.shell = "/usr/bin/fish"
