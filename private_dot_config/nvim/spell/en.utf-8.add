@@ -11,7 +11,7 @@ jpulec
 lsb
 config
 update/!
-export/!
+#xport/!
 update
 createinc
 serializeBiDirectionalVoteDirection/!
@@ -28,5 +28,11 @@ import/!
 repoRepo/!
 response/!
 langchain/!
-export/!
+#xport/!
 Column/!
+getSourceFile/!
+export/!
+ConnectionFromRepositoryOptions/!
+EventHandler/!
+openAIStream/!
+useSaxWasm/!

@@ -66,3 +66,5 @@ o.foldmethod = "expr"
 o.foldexpr = "nvim_treesitter#foldexpr()"
 
 o.shell = "/usr/bin/fish"
+
+vim.g.slime_target = "neovim"

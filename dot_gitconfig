@@ -77,4 +77,11 @@
 	clean = git-lfs clean -- %f
 
 [init]
-  defaultBranch = main
+	defaultBranch = main
+[safe]
+	directory = /tmp/clone
+[http]
+  postBuffer = 524288000
+
+[submodule]
+  recurse = true
