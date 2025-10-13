@@ -261,10 +261,14 @@ bindsym Ctrl+Shift+BackSpace exec killall -s SIGINT wf-recorder
 #    }
 #}
 #
-bar swaybar_command waybar
+#bar swaybar_command "~/.config/waybar/waybar-launch.sh"
+#bar swaybar_command "~/.config/waybar/waybar-launch.sh"
 
 include /etc/sway/config.d/*
 
 exec_always "pkill kanshi; kanshi"
+exec_always ~/.config/waybar/waybar-launch.sh
 
 exec wl-paste -t text --watch clipman store --no-persist
+
+exec udiskie --appindicator -t

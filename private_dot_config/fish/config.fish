@@ -1,15 +1,6 @@
-if status --is-interactive
-  powerline-daemon -q
-  set fish_function_path $fish_function_path "/usr/lib/python3.11/site-packages/powerline/bindings/fish"
-  powerline-setup
-end
-
 set -gx EDITOR nvim
-set -gx PATH ~/.gem/ruby/2.5.0/bin $PATH
+set -gx PATH ~/.local/share/gem/ruby/3.3.0/bin $PATH
 set -gx PATH ~/.npm-global/bin $PATH
-# set -gx PATH ~/.config/fnm/bin $PATH
-
-# set -gx PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
 ## Aliases
 # Alias sudo so that aliases work
@@ -48,3 +39,8 @@ function __nvm_auto --on-variable PWD
 end
 __nvm_auto
 
+if status --is-interactive
+  powerline-daemon -q
+  set fish_function_path $fish_function_path "/usr/lib/python3.13/site-packages/powerline/bindings/fish"
+  powerline-setup
+end

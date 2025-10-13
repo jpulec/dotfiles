@@ -1,6 +1,6 @@
 aliases:
-    rp: pr create --assignee @me
-    rpr: pr create --assignee @me --reviewer @Create-Inc/creators
-    rprd: pr create --assignee @me --draft
-    mp: pr merge --auto --squash --delete-branch
+  rp: pr create --assignee @me
+  rpr: pr create --assignee @me --reviewer @Create-Inc/eng
+  rprd: pr create --assignee @me --draft
+  mp: pr merge --auto --squash --delete-branch
 version: "1"

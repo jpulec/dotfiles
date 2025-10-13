@@ -51,8 +51,9 @@ abbr --add dcoup docker-compose up -d
 abbr --add dcor docker-compose run --rm
 abbr --add dcoru docker-compose run --rm --user (id -u):(id -g)
 abbr --add dstop "docker ps --format '{{.ID}}' | xargs --no-run-if-empty docker stop"
-abbr --add dcstart "docker-compose up --detach --wait && docker-compose run --rm --workdir=/app api yarn turbo run --filter=flux-api seed:run"
-abbr --add dcbstart "docker-compose up --detach --build && docker-compose run --rm --workdir=/app api yarn turbo run --filter=flux-api seed:run"
+abbr --add dcstart "docker-compose up --detach --wait && docker-compose run --rm --workdir=/app api yarn turbo run --filter=@createinc/flux-api --env-mode=loose seed:run"
+abbr --add dcbstart "docker-compose up --detach --build && docker-compose run --rm --workdir=/app api yarn turbo run --filter=@createinc/flux-api --env-mode=loose seed:run"
+abbr --add dcbs "docker-compose build && docker-compose run --rm --workdir=/app api yarn turbo run --filter=@createinc/flux-api --env-mode=loose seed:run"
 
 # Standard shell command abbreviations
 
