@@ -20,7 +20,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-**/build/
+#**/build/
 !**/pages/build/
 develop-eggs/
 dist/
@@ -84,3 +84,6 @@ tags.temp
 
 # For now, ignore these since other people don't use them
 .envrc
+
+# Personal files
+_james.*

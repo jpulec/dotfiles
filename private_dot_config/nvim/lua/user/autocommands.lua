@@ -29,3 +29,24 @@ vim.cmd([[
     autocmd User AlphaReady set showtabline=0 | autocmd BufUnload <buffer> set showtabline=2
   augroup end
 ]])
+
+-- Open Alpha (or a blank buffer) instead of exiting when no listed buffers remain
+vim.api.nvim_create_autocmd("BufEnter", {
+	callback = function()
+		if vim.bo.filetype == "alpha" then
+			return
+		end
+		if #vim.fn.getbufinfo({ buflisted = 1 }) == 0 then
+			-- ensure there's a normal buffer for Alpha to attach to
+			if vim.bo.buftype ~= "" then
+				vim.cmd("enew")
+			end
+			local ok, alpha = pcall(require, "alpha")
+			if ok then
+				alpha.start(false)
+			else
+				vim.cmd("enew")
+			end
+		end
+	end,
+})

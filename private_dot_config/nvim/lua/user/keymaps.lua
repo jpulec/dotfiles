@@ -1,6 +1,6 @@
 local opts = { noremap = true, silent = true }
 
-local keymap = vim.api.nvim_set_keymap
+local keymap = vim.keymap.set
 
 -- Remap the leader key as space
 keymap("", "<Space>", "<Nop>", opts)
@@ -28,19 +28,42 @@ keymap("n", "<S-Tab>", "<cmd>bp<CR>", opts)
 -- Leader Buffer mappings
 keymap("n", "<leader>n", ":bnext<cr>", opts)
 keymap("n", "<leader>p", ":bprev<cr>", opts)
-keymap("n", "<leader>bd", ":bprev|bd #<cr>", opts)
+keymap("n", "<leader>bd", ":bd<cr>", opts)
+
+-- Toggle wrap
+keymap("n", "<leader>w", ":set wrap! linebreak!<CR>:echo 'wrap=' . &wrap<CR>", opts)
 
 -- Telescope
 keymap(
 	"n",
 	"<leader>t",
-	"<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>",
+	"<cmd>Telescope find_files<cr>",
+	--"<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>",
 	opts
 )
 keymap("n", "<leader>f", "<cmd>Telescope live_grep<cr>", opts)
 
 -- Nvimtree
 keymap("n", "<leader>e", ":NvimTreeToggle<cr>", opts)
+
+-- Diagnostics
+local diagnostic_goto = function(next, severity)
+	severity = severity and vim.diagnostic.severity[severity] or nil
+	return function()
+		if next then
+			vim.diagnostic.jump({ count = 1, float = true, severity = severity })
+		else
+			vim.diagnostic.jump({ count = -1, float = true, severity = severity })
+		end
+	end
+end
+keymap("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+keymap("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
+keymap("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
+keymap("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
+keymap("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
+keymap("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
+keymap("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 
 -- Insert --
 
@@ -62,3 +85,13 @@ keymap("x", "J", ":move '>+1<CR>gv-gv", opts)
 keymap("x", "K", ":move '<-2<CR>gv-gv", opts)
 keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", opts)
 keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
+
+-- Config File Editing --
+keymap("n", "<leader>ev", ":e ~/.config/nvim/init.lua<cr>", opts)
+
+-- LLM CodeCompanion
+keymap("n", "<C-a>", "<cmd>CodeCompanionActions<cr>", opts)
+keymap("v", "<C-a>", "<cmd>CodeCompanionActions<cr>", opts)
+keymap("n", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", opts)
+keymap("v", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", opts)
+keymap("v", "ga", "<cmd>CodeCompanionChat Add<cr>", opts)

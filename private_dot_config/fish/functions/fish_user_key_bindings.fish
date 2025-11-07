@@ -1,4 +1,4 @@
 function fish_user_key_bindings
-    bind \cp 'set -l file (fzf --ansi --preview="bat --color=always --style=numbers,grid,changes {}"); and nvim $file'
+    bind \cp 'set -l file (fd --type f --hidden --follow --exclude .git | grep -Ev "(test|spec|__tests__)" | fzf --ansi --preview="bat --color=always --style=numbers,grid,changes {}" --prompt="Files (no tests, no .gitignore) > " --bind="ctrl-t:reload(fd --type f --hidden --follow --exclude .git)+change-prompt(All files (no .gitignore) > ),ctrl-n:reload(fd --type f --hidden --follow --exclude .git | grep -Ev \"(test|spec|__tests__)\")+change-prompt(Files (no tests, no .gitignore) > ),ctrl-g:reload(fd --type f --hidden --follow --no-ignore --exclude .git | grep -Ev \"(test|spec|__tests__)\")+change-prompt(Files (no tests, with .gitignore) > ),ctrl-a:reload(fd --type f --hidden --follow --no-ignore --exclude .git)+change-prompt(All files (with .gitignore) > )"); and nvim $file'
     bind \cd delete-char
 end

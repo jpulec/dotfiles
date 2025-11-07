@@ -22,15 +22,20 @@
 	untracked = cyan
 
 [core]
-	editor = nvim
-	pager = less -FRSX
+	editor = nvim --clean -c 'set ft=gitcommit nobackup nowritebackup noswapfile' +startinsert
+  pager = delta
 	whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
   excludesfile = ~/.gitignore
   attributesfile = ~/.gitattributes
 
+[delta]
+  features = side-by-side line-numbers
+  side-by-side = true
+  line-numbers = true
+
 [alias]
   co = checkout
-  cl = clean -xd -e .envrc -e .env.development.local
+  cl = clean -xd -e .envrc -e .env.development.local -e _james*
   ci = commit
 	st = status
   df = diff
@@ -44,6 +49,7 @@
   rs = restore
   mt = mergetool
   wt = worktree
+  wtl = worktree list
   squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
 
 [diff]
@@ -56,6 +62,10 @@
 [merge]
   tool = fugitive
   conflictStyle = zdiff3
+
+[merge "yarndriver"]
+  name = My Yarn Fixer
+  driver = yarn install
 
 [mergetool "fugitive"]
   cmd  = "nvim -f -c \"Gvdiffsplit!\" \"$MERGED\""
@@ -81,7 +91,8 @@
 [safe]
 	directory = /tmp/clone
 [http]
-  postBuffer = 524288000
+	postBuffer = 157286400
+	version = HTTP/1.1
 
 [submodule]
   recurse = true

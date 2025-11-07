@@ -42,6 +42,7 @@ o.termguicolors = true
 o.wrap = false
 o.scrolloff = 8
 o.sidescrolloff = 8
+o.winborder = "rounded"
 
 o.smartindent = true
 
@@ -62,8 +63,18 @@ o.iskeyword:append("-")
 o.virtualedit = "block"
 
 -- Folding
+--o.foldmethod = "expr"
+--o.foldexpr = "nvim_treesitter#foldexpr()"
+
+-- Enable folding
+o.foldenable = true -- Enable folding by default
+o.foldlevel = 99 -- Open most folds by default
+o.foldlevelstart = 99 -- Start with all folds open
+o.foldnestmax = 3 -- Max nested folds
+
+-- Use treesitter for folds
 o.foldmethod = "expr"
-o.foldexpr = "nvim_treesitter#foldexpr()"
+o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
 o.shell = "/usr/bin/fish"
 
