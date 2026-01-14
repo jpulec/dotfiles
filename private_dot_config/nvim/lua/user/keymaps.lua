@@ -88,10 +88,3 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 
 -- Config File Editing --
 keymap("n", "<leader>ev", ":e ~/.config/nvim/init.lua<cr>", opts)
-
--- LLM CodeCompanion
-keymap("n", "<C-a>", "<cmd>CodeCompanionActions<cr>", opts)
-keymap("v", "<C-a>", "<cmd>CodeCompanionActions<cr>", opts)
-keymap("n", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", opts)
-keymap("v", "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", opts)
-keymap("v", "ga", "<cmd>CodeCompanionChat Add<cr>", opts)
