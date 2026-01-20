@@ -1,6 +1,5 @@
 local o = vim.opt
 
-o.cmdheight = 2 -- more space for commandline for messages
 o.completeopt = { "menuone", "noselect" } -- mostly for cmp
 
 -- Better case handling

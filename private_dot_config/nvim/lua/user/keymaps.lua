@@ -28,7 +28,7 @@ keymap("n", "<S-Tab>", "<cmd>bp<CR>", opts)
 -- Leader Buffer mappings
 keymap("n", "<leader>n", ":bnext<cr>", opts)
 keymap("n", "<leader>p", ":bprev<cr>", opts)
-keymap("n", "<leader>bd", ":bd<cr>", opts)
+keymap("n", "<leader>bd", function() Snacks.bufdelete() end, { noremap = true, silent = true, desc = "Delete buffer" })
 
 -- Toggle wrap
 keymap("n", "<leader>w", ":set wrap! linebreak!<CR>:echo 'wrap=' . &wrap<CR>", opts)

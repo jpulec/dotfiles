@@ -70,3 +70,5 @@ abbr --add ls ls --color=auto
 abbr --add ll ls -alF
 abbr --add la ls -A
 abbr --add l ls -CF
+
+abbr --add oc opencode attach http://localhost:4096 --dir=.
