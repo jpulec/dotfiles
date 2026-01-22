@@ -1,50 +1,25 @@
-{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch")  -}}
+{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch") -}}
 #!/bin/sh
+# Portable CLI tools for dotfiles
+# Skip if GRIEVER_INSTALL is set (griever handles packages)
 
-# Install yay manually
-sudo pacman -S --needed git base-devel \
-  && git clone https://aur.archlinux.org/yay.git \
-  && cd yay \
-  && makepkg -si \
-  && cd .. \
-  && rm -rf yay
+if [ -n "$GRIEVER_INSTALL" ]; then
+    echo "Skipping dotfiles package install (griever handles this)"
+    exit 0
+fi
 
-sudo pacman -S \
+sudo pacman -S --needed --noconfirm \
   bat \
   direnv \
   fish \
-  fisher \
   fzf \
+  git \
   github-cli \
-  man \
+  man-db \
   neovim \
-  npm \
-  powerline \
   ripgrep \
-  sudo \
   tmux \
-  typescript \
-  wl-clipboard \
-  yarn \
-  xdg-user-dirs
+  zoxide
 
-yay -S \
-  bash-language-server \
-  dockerfile-language-server \
-  eslint_d \
-  kanshi \
-  lua-language-server \
-  nvim-packer-git \
-  prettierd \
-  sql-language-server \
-  stylua \
-  tailwindcss-language-server \
-  tmux-plugin-manager-git \
-  typescript-language-server \
-  vscode-html-languageserver \
-  vscode-json-languageserver \
-  yaml-language-server
-
-# Bootstrap packer plugins
-nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+echo "Portable CLI tools installed"
 {{ end -}}
