@@ -12,6 +12,18 @@ zoxide init fish | source
 alias sudo='sudo '
 alias docker-compose="docker compose"
 
+## Chezmoi helpers (two-repo setup: dotfiles + griever)
+function chezmoi-hierarchical --description "Apply both dotfiles and griever configs"
+    chezmoi apply $argv
+    chezmoi apply --source=~/.local/share/griever $argv
+end
+
+function chezmoi-update --description "Update both dotfiles and griever"
+    chezmoi update
+    git -C ~/.local/share/griever pull
+    chezmoi apply --source=~/.local/share/griever
+end
+
 # Set ripgrep as default for FZF
 set --global --export FZF_DEFAULT_COMMAND 'rg --files --hidden'
 
