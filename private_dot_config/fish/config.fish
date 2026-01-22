@@ -1,7 +1,11 @@
 set --global --export EDITOR nvim
-set --global --export PATH ~/.local/share/gem/ruby/3.3.0/bin $PATH
-set --global --export PATH ~/.npm-global/bin $PATH
+fish_add_path ~/.local/bin
+fish_add_path ~/.local/share/gem/ruby/3.3.0/bin
+fish_add_path ~/.npm-global/bin
 set --global --export NODE_OPTIONS "--experimental-sqlite"
+
+# Initialize zoxide (smart cd)
+zoxide init fish | source
 
 ## Aliases
 # Alias sudo so that aliases work
@@ -14,6 +18,8 @@ set --global --export FZF_DEFAULT_COMMAND 'rg --files --hidden'
 set --global --export COMPOSE_HTTP_TIMEOUT 200
 set --global --export PIPENV_VENV_IN_PROJECT 1
 set --global pipenv_fish_fancy yes
+
+# TODO: Consider dropping this in favor of cloudflared or something else
 set --global --export LOCAL_TUNNEL https://jpulec.ngrok.io
 set --global --export RIPGREP_CONFIG_PATH ~/.ripgreprc
 
@@ -32,7 +38,6 @@ end
 __nvm_auto
 
 if status --is-interactive
-  #set --global --export ANTHROPIC_API_KEY (op read --no-newline "op://Employee/Anthropic API Key/credential")
   set --global fish_key_bindings fish_default_key_bindings
 
   # Theme colors

@@ -1,0 +1,12 @@
+# ~/.config/systemd/user/mako.service
+[Unit]
+Description=Mako notification daemon
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/mako
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
