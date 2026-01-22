@@ -1,0 +1,15 @@
+#!/usr/bin/env fish
+# Install fisher plugins from fish_plugins file
+# {{ include "private_dot_config/fish/fish_plugins" | sha256sum }}
+
+if not type -q fisher
+    echo "Fisher not installed, skipping plugin installation"
+    exit 0
+end
+
+if test -f ~/.config/fish/fish_plugins
+    echo "Installing fisher plugins..."
+    fisher update
+else
+    echo "No fish_plugins file found"
+end
