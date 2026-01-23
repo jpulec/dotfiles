@@ -1,50 +1,37 @@
-local opts = { noremap = true, silent = true }
-
 local keymap = vim.keymap.set
 
 -- Remap the leader key as space
-keymap("", "<Space>", "<Nop>", opts)
+keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Normal --
 -- Better window navigation
-keymap("n", "<C-h>", "<C-w>h", opts)
-keymap("n", "<C-j>", "<C-w>j", opts)
-keymap("n", "<C-k>", "<C-w>k", opts)
-keymap("n", "<C-l>", "<C-w>l", opts)
+keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true, desc = "Go to left window" })
+keymap("n", "<C-j>", "<C-w>j", { noremap = true, silent = true, desc = "Go to lower window" })
+keymap("n", "<C-k>", "<C-w>k", { noremap = true, silent = true, desc = "Go to upper window" })
+keymap("n", "<C-l>", "<C-w>l", { noremap = true, silent = true, desc = "Go to right window" })
 
 -- Resize with arrows
-keymap("n", "<C-Up>", ":resize +2<CR>", opts)
-keymap("n", "<C-Down>", ":resize -2<CR>", opts)
-keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+keymap("n", "<C-Up>", ":resize +2<CR>", { noremap = true, silent = true, desc = "Increase window height" })
+keymap("n", "<C-Down>", ":resize -2<CR>", { noremap = true, silent = true, desc = "Decrease window height" })
+keymap("n", "<C-Left>", ":vertical resize -2<CR>", { noremap = true, silent = true, desc = "Decrease window width" })
+keymap("n", "<C-Right>", ":vertical resize +2<CR>", { noremap = true, silent = true, desc = "Increase window width" })
 
 -- Buffers
-keymap("n", "<Tab>", "<cmd>bn<CR>", opts)
-keymap("n", "<S-Tab>", "<cmd>bp<CR>", opts)
---keymap("n", "<space>bd", "<cmd>bd<CR>", opts)
-
--- Leader Buffer mappings
-keymap("n", "<leader>n", ":bnext<cr>", opts)
-keymap("n", "<leader>p", ":bprev<cr>", opts)
+keymap("n", "<Tab>", "<cmd>bn<CR>", { noremap = true, silent = true, desc = "Next buffer" })
+keymap("n", "<S-Tab>", "<cmd>bp<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
 keymap("n", "<leader>bd", function() Snacks.bufdelete() end, { noremap = true, silent = true, desc = "Delete buffer" })
 
 -- Toggle wrap
-keymap("n", "<leader>w", ":set wrap! linebreak!<CR>:echo 'wrap=' . &wrap<CR>", opts)
+keymap("n", "<leader>w", ":set wrap! linebreak!<CR>:echo 'wrap=' . &wrap<CR>", { noremap = true, silent = true, desc = "Toggle wrap" })
 
 -- Telescope
-keymap(
-	"n",
-	"<leader>t",
-	"<cmd>Telescope find_files<cr>",
-	--"<cmd>lua require'telescope.builtin'.find_files(require('telescope.themes').get_dropdown({ previewer = false }))<cr>",
-	opts
-)
-keymap("n", "<leader>f", "<cmd>Telescope live_grep<cr>", opts)
+keymap("n", "<leader>t", "<cmd>Telescope find_files<cr>", { noremap = true, silent = true, desc = "Find files" })
+keymap("n", "<leader>f", "<cmd>Telescope live_grep<cr>", { noremap = true, silent = true, desc = "Live grep" })
 
 -- Nvimtree
-keymap("n", "<leader>e", ":NvimTreeToggle<cr>", opts)
+keymap("n", "<leader>e", ":NvimTreeToggle<cr>", { noremap = true, silent = true, desc = "Toggle file explorer" })
 
 -- Diagnostics
 local diagnostic_goto = function(next, severity)
@@ -65,26 +52,24 @@ keymap("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
 keymap("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
 keymap("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 
--- Insert --
-
 -- Visual --
 -- Stay in indent mode
-keymap("v", "<", "<gv", opts)
-keymap("v", ">", ">gv", opts)
+keymap("v", "<", "<gv", { noremap = true, silent = true, desc = "Indent left" })
+keymap("v", ">", ">gv", { noremap = true, silent = true, desc = "Indent right" })
 
 -- Move text up and down
-keymap("v", "<A-j>", ":m .+1<CR>==", opts)
-keymap("v", "<A-k>", ":m .-2<CR>==", opts)
+keymap("v", "<A-j>", ":m .+1<CR>==", { noremap = true, silent = true, desc = "Move line down" })
+keymap("v", "<A-k>", ":m .-2<CR>==", { noremap = true, silent = true, desc = "Move line up" })
 
 -- Don't replace unnamed register with replaced text
-keymap("v", "p", '"_dP', opts)
+keymap("v", "p", '"_dP', { noremap = true, silent = true, desc = "Paste without yanking" })
 
 -- Visual Block --
 -- Move text up and down
-keymap("x", "J", ":move '>+1<CR>gv-gv", opts)
-keymap("x", "K", ":move '<-2<CR>gv-gv", opts)
-keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", opts)
-keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
+keymap("x", "J", ":move '>+1<CR>gv-gv", { noremap = true, silent = true, desc = "Move block down" })
+keymap("x", "K", ":move '<-2<CR>gv-gv", { noremap = true, silent = true, desc = "Move block up" })
+keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", { noremap = true, silent = true, desc = "Move block down" })
+keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", { noremap = true, silent = true, desc = "Move block up" })
 
 -- Config File Editing --
-keymap("n", "<leader>ev", ":e ~/.config/nvim/init.lua<cr>", opts)
+keymap("n", "<leader>ev", ":e ~/.config/nvim/init.lua<cr>", { noremap = true, silent = true, desc = "Edit nvim config" })
