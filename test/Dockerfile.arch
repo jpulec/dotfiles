@@ -1,0 +1,27 @@
+FROM archlinux:latest
+
+# Update system and install base dependencies
+RUN pacman -Syu --noconfirm && \
+    pacman -S --noconfirm --needed \
+      base-devel \
+      curl \
+      git \
+      sudo \
+    && pacman -Scc --noconfirm
+
+# Create test user with sudo access
+RUN useradd -m -s /bin/bash testuser && \
+    echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/testuser
+
+# Switch to test user
+USER testuser
+WORKDIR /home/testuser
+
+# Copy dotfiles into container
+COPY --chown=testuser:testuser . /home/testuser/.local/share/chezmoi
+
+# Run install script
+RUN cd /home/testuser/.local/share/chezmoi && ./install.sh
+
+# Default command runs the test script
+CMD ["/home/testuser/.local/share/chezmoi/test/verify.sh"]

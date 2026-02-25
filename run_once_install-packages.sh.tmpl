@@ -50,11 +50,11 @@ if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
     sudo ln -sf "$(command -v batcat)" /usr/local/bin/bat
 fi
 
-# Set fish as default shell
+{{ end -}}
+# Set fish as default shell (applies to all distros)
 if [ "$(getent passwd "$(whoami)" | cut -d: -f7)" != "$(which fish)" ]; then
     sudo chsh -s "$(which fish)" "$(whoami)"
 fi
 
-{{ end -}}
 echo "Portable CLI tools installed"
 {{ end -}}

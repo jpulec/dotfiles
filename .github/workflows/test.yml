@@ -7,16 +7,19 @@ on:
     branches: [main, master]
 
 jobs:
-  test-ubuntu:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro: [ubuntu, arch]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build and test on Ubuntu 24.04
+      - name: Build and test on ${{ matrix.distro }}
         run: |
           docker build \
-            --file test/Dockerfile.ubuntu \
-            --tag dotfiles-test:ubuntu \
+            --file test/Dockerfile.${{ matrix.distro }} \
+            --tag dotfiles-test:${{ matrix.distro }} \
             .
-          docker run --rm dotfiles-test:ubuntu
+          docker run --rm dotfiles-test:${{ matrix.distro }}
