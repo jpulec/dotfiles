@@ -1,4 +1,4 @@
-{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch") -}}
+{{ if eq .chezmoi.os "linux" -}}
 #!/bin/sh
 # Portable CLI tools for dotfiles
 # Skip if GRIEVER_INSTALL is set (griever handles packages)
@@ -8,6 +8,8 @@ if [ -n "$GRIEVER_INSTALL" ]; then
     exit 0
 fi
 
+{{ if eq .chezmoi.osRelease.id "arch" -}}
+# Arch Linux
 sudo pacman -S --needed --noconfirm \
   bat \
   direnv \
@@ -21,5 +23,38 @@ sudo pacman -S --needed --noconfirm \
   tmux \
   zoxide
 
+{{ else if eq .chezmoi.osRelease.id "ubuntu" -}}
+# Ubuntu / Debian
+export DEBIAN_FRONTEND=noninteractive
+
+# Add fish PPA for latest version
+if ! command -v fish >/dev/null 2>&1; then
+    sudo apt-add-repository -y ppa:fish-shell/release-3
+fi
+
+sudo apt-get update -qq
+sudo apt-get install -y -qq \
+  bat \
+  direnv \
+  fish \
+  fzf \
+  git \
+  gh \
+  man-db \
+  ripgrep \
+  tmux \
+  zoxide
+
+# bat is installed as batcat on Ubuntu - symlink it
+if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
+    sudo ln -sf "$(command -v batcat)" /usr/local/bin/bat
+fi
+
+# Set fish as default shell
+if [ "$(getent passwd "$(whoami)" | cut -d: -f7)" != "$(which fish)" ]; then
+    sudo chsh -s "$(which fish)" "$(whoami)"
+fi
+
+{{ end -}}
 echo "Portable CLI tools installed"
 {{ end -}}

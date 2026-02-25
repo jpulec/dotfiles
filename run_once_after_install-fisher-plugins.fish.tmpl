@@ -2,9 +2,11 @@
 # Install fisher plugins from fish_plugins file
 # {{ include "private_dot_config/fish/fish_plugins" | sha256sum }}
 
+# Install fisher if not present
 if not type -q fisher
-    echo "Fisher not installed, skipping plugin installation"
-    exit 0
+    echo "Installing fisher..."
+    curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+    fisher install jorgebucaran/fisher
 end
 
 if test -f ~/.config/fish/fish_plugins
