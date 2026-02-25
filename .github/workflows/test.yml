@@ -1,0 +1,22 @@
+name: Test Dotfiles
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and test on Ubuntu 24.04
+        run: |
+          docker build \
+            --file test/Dockerfile.ubuntu \
+            --tag dotfiles-test:ubuntu \
+            .
+          docker run --rm dotfiles-test:ubuntu

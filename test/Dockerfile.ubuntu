@@ -1,0 +1,29 @@
+FROM ubuntu:24.04
+
+# Avoid prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install base dependencies (similar to Coder workspace)
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    sudo \
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create test user with sudo access (mimics Coder's 'coder' user)
+RUN useradd -m -s /bin/bash testuser \
+    && echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/testuser
+
+# Switch to test user
+USER testuser
+WORKDIR /home/testuser
+
+# Copy dotfiles into container
+COPY --chown=testuser:testuser . /home/testuser/.local/share/chezmoi
+
+# Run install script
+RUN cd /home/testuser/.local/share/chezmoi && ./install.sh
+
+# Default command runs the test script
+CMD ["/home/testuser/.local/share/chezmoi/test/verify.sh"]
