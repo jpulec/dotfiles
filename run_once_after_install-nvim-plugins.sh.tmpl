@@ -1,0 +1,19 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+# Install Neovim plugins via Lazy.nvim
+# This runs after dotfiles are applied to pre-install all plugins
+
+if ! command -v nvim >/dev/null 2>&1; then
+    echo "Neovim not installed, skipping plugin installation"
+    exit 0
+fi
+
+echo "Installing Neovim plugins via Lazy..."
+
+# Run Lazy sync in headless mode
+# - Lazy! (with bang) suppresses the UI
+# - sync installs missing plugins and updates existing ones
+nvim --headless "+Lazy! sync" "+qa"
+
+echo "Neovim plugins installed"
+{{ end -}}

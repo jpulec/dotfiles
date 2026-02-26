@@ -44,6 +44,13 @@ check "fish is default shell" "getent passwd \$(whoami) | grep -q fish"
 check "fisher installed" "fish -c 'type -q fisher'"
 check "fish_plugins file exists" "test -f ~/.config/fish/fish_plugins"
 
+check "opencode installed" "command -v opencode"
+
+echo ""
+echo "--- Neovim setup ---"
+check "lazy.nvim installed" "test -d ~/.local/share/nvim/lazy/lazy.nvim"
+check "nvim plugins synced" "test -f ~/.config/nvim/lazy-lock.json"
+
 echo ""
 echo "--- Summary ---"
 echo "Passed: $PASS"

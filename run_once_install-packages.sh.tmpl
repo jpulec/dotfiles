@@ -50,10 +50,28 @@ if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
     sudo ln -sf "$(command -v batcat)" /usr/local/bin/bat
 fi
 
+# Install Neovim via AppImage (Ubuntu repos have old version)
+if ! command -v nvim >/dev/null 2>&1; then
+    curl -fsSL -o /tmp/nvim.appimage https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.appimage
+    chmod +x /tmp/nvim.appimage
+    # Extract AppImage (works in containers without FUSE)
+    cd /tmp && ./nvim.appimage --appimage-extract >/dev/null 2>&1
+    sudo mv /tmp/squashfs-root /opt/nvim
+    sudo ln -sf /opt/nvim/AppRun /usr/local/bin/nvim
+    rm -f /tmp/nvim.appimage
+fi
+
 {{ end -}}
 # Set fish as default shell (applies to all distros)
 if [ "$(getent passwd "$(whoami)" | cut -d: -f7)" != "$(which fish)" ]; then
     sudo chsh -s "$(which fish)" "$(whoami)"
+fi
+
+# Install OpenCode
+if ! command -v opencode >/dev/null 2>&1 && ! test -x "$HOME/.opencode/bin/opencode"; then
+    curl -fsSL https://opencode.ai/install | bash -s -- --no-modify-path
+    # Symlink to a standard PATH location
+    sudo ln -sf "$HOME/.opencode/bin/opencode" /usr/local/bin/opencode
 fi
 
 echo "Portable CLI tools installed"
