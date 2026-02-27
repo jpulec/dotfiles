@@ -46,7 +46,7 @@ retry_apt() {
 
 # Add fish PPA for latest version
 if ! command -v fish >/dev/null 2>&1; then
-    retry_apt sudo apt-add-repository -y ppa:fish-shell/release-3
+    sudo apt-add-repository -y --no-update ppa:fish-shell/release-3
 fi
 
 retry_apt sudo apt-get update -qq
