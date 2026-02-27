@@ -27,13 +27,30 @@ sudo pacman -S --needed --noconfirm \
 # Ubuntu / Debian
 export DEBIAN_FRONTEND=noninteractive
 
+# Retry wrapper for apt commands that may fail due to lock contention
+# (e.g. when Coder startup scripts run apt concurrently)
+retry_apt() {
+    local attempt=1
+    local max_attempts=30
+    while [ "$attempt" -le "$max_attempts" ]; do
+        if "$@"; then
+            return 0
+        fi
+        echo "apt command failed (attempt $attempt/$max_attempts), retrying in 5s..."
+        attempt=$((attempt + 1))
+        sleep 5
+    done
+    echo "apt command failed after $max_attempts attempts"
+    return 1
+}
+
 # Add fish PPA for latest version
 if ! command -v fish >/dev/null 2>&1; then
-    sudo apt-add-repository -y ppa:fish-shell/release-3
+    retry_apt sudo apt-add-repository -y ppa:fish-shell/release-3
 fi
 
-sudo apt-get update -qq
-sudo apt-get install -y -qq \
+retry_apt sudo apt-get update -qq
+retry_apt sudo apt-get install -y -qq \
   bat \
   direnv \
   fish \
