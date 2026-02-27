@@ -8,6 +8,13 @@ if ! command -v nvim >/dev/null 2>&1; then
     exit 0
 fi
 
+# Skip blocking plugin sync under Coder - Lazy auto-installs on first launch
+# and the sync can exceed Coder's script timeout
+if [ -n "$CODER_AGENT_TOKEN" ]; then
+    echo "Running under Coder, skipping blocking Lazy sync (plugins install on first nvim launch)"
+    exit 0
+fi
+
 echo "Installing Neovim plugins via Lazy..."
 
 # Run Lazy sync in headless mode

@@ -36,9 +36,9 @@ retry_apt() {
         if "$@"; then
             return 0
         fi
-        echo "apt command failed (attempt $attempt/$max_attempts), retrying in 5s..."
+        echo "apt command failed (attempt $attempt/$max_attempts), retrying in 2s..."
         attempt=$((attempt + 1))
-        sleep 5
+        sleep 2
     done
     echo "apt command failed after $max_attempts attempts"
     return 1
