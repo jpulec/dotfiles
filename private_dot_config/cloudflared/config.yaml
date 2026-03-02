@@ -1,0 +1,8 @@
+tunnel: james
+credentials-file: ~/.cloudflared/james.json
+
+ingress:
+  - hostname: web.james.tunnel.anything-dev.com
+    service: http://localhost:3000
+
+  - service: http_status:404

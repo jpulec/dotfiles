@@ -1,0 +1,99 @@
+#!/usr/bin/env fish
+# Worktree workspace switcher for Hyprland
+# Usage: wt-workspace [--move] [worktree-name]
+#   --move: Move current window to the selected workspace instead of switching
+#   worktree-name: Optional - if provided, switches directly without picker
+#                  If the worktree doesn't exist, it will be created from main/master
+
+set WORKTREE_DIR "$HOME/Dev/Create/escher-wt"
+
+# Parse arguments
+set move_window false
+set target_worktree ""
+
+for arg in $argv
+    switch $arg
+        case --move
+            set move_window true
+        case '*'
+            set target_worktree $arg
+    end
+end
+
+# If no worktree specified, use walker to pick one
+if test -z "$target_worktree"
+    # Get list of worktrees (directories, excluding hidden)
+    set worktree_dirs (ls -1 "$WORKTREE_DIR" 2>/dev/null | grep -v '^\.')
+
+    # Build list with branch names
+    set worktree_list
+    for wt in $worktree_dirs
+        set branch (git -C "$WORKTREE_DIR/$wt" rev-parse --abbrev-ref HEAD 2>/dev/null)
+        if test -n "$branch"
+            set --append worktree_list "$wt | $branch"
+        else
+            set --append worktree_list "$wt"
+        end
+    end
+
+    # Use walker in dmenu mode to select or type a new name
+    if test (count $worktree_list) -eq 0
+        set selection (printf '' | walker --dmenu --placeholder "Enter new worktree name")
+    else
+        set selection (printf '%s\n' $worktree_list | walker --dmenu --placeholder "Select or enter new worktree")
+    end
+
+    if test -z "$selection"
+        exit 0  # User cancelled
+    end
+
+    # Extract worktree name (strip branch info if present)
+    set target_worktree (string replace --regex ' \\| .*$' '' "$selection")
+end
+
+# Use worktree name directly as workspace name (no prefix)
+set workspace_name "$target_worktree"
+set needs_worktree_creation false
+
+# Check if worktree needs to be created
+if not test -d "$WORKTREE_DIR/$target_worktree"
+    set needs_worktree_creation true
+end
+
+if test "$move_window" = true
+    # Move current window to the workspace
+    hyprctl dispatch movetoworkspace "name:$workspace_name"
+else
+    # Check if workspace has any windows before switching
+    set current_windows (hyprctl clients -j | jq "[.[] | select(.workspace.name == \"$workspace_name\")] | length")
+
+    # Switch to the workspace immediately
+    hyprctl dispatch workspace "name:$workspace_name"
+
+    # If workspace was empty or new worktree needed, open terminal
+    if test "$current_windows" = "0" -o "$current_windows" = ""
+        sleep 0.1  # Brief delay to ensure workspace switch completes
+
+        if test "$needs_worktree_creation" = true
+            # Determine the default branch (main or master)
+            set default_branch (git -C "$WORKTREE_DIR" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+            if test -z "$default_branch"
+                # Fallback: check if main or master exists
+                if git -C "$WORKTREE_DIR" show-ref --verify --quiet refs/heads/main
+                    set default_branch "main"
+                else if git -C "$WORKTREE_DIR" show-ref --verify --quiet refs/heads/master
+                    set default_branch "master"
+                else
+                    notify-send "Error" "Could not determine default branch"
+                    exit 1
+                end
+            end
+
+            # Open terminal with loading animation that creates the worktree
+            hyprctl dispatch exec "footclient $HOME/.local/bin/wt-workspace-create $WORKTREE_DIR $target_worktree $default_branch"
+        else
+            # Existing worktree, just open terminal
+            hyprctl dispatch exec "footclient --working-directory='$WORKTREE_DIR/$target_worktree'"
+        end
+    end
+end

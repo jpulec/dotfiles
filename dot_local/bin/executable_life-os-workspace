@@ -1,0 +1,17 @@
+#!/usr/bin/env fish
+# Open life-os workspace with opencode
+
+set workspace_name "life"
+set working_dir "$HOME/life"
+
+# Check if workspace has any windows before switching
+set current_windows (hyprctl clients -j | jq "[.[] | select(.workspace.name == \"$workspace_name\")] | length")
+
+# Switch to the workspace
+hyprctl dispatch workspace "name:$workspace_name"
+
+# If workspace was empty, open terminal in life-os directory
+if test "$current_windows" = "0" -o "$current_windows" = ""
+    sleep 0.2
+    hyprctl dispatch exec "footclient --working-directory='$working_dir' -e opencode attach http://localhost:4096 --dir=."
+end

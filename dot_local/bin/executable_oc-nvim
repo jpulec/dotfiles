@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+export ANTHROPIC_API_KEY=$(op read --account createxyz.1password.com --no-newline "op://Employee/Anthropic API Key/credential")
+exec opencode "$@"

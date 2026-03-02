@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#
+# coder-nvim: Connect to a Coder workspace with Neovim remote-ui
+#
+# Usage: coder-nvim <workspace-name> [directory]
+#
+# This script:
+# 1. Starts a headless Neovim on the remote workspace (if not running)
+# 2. Sets up port forwarding via coder
+# 3. Connects your local Neovim as a remote UI client
+
+set -euo pipefail
+
+NVIM_PORT="${CODER_NVIM_PORT:-6666}"
+WORKSPACE="${1:-}"
+REMOTE_DIR="${2:-}"
+
+if [[ -z "$WORKSPACE" ]]; then
+    echo "Usage: coder-nvim <workspace-name> [directory]"
+    echo ""
+    echo "Available workspaces:"
+    coder list 2>/dev/null | grep -v "^version mismatch" | grep -v "^download v2" | tail -n +2
+    exit 1
+fi
+
+# Function to clean up background processes on exit
+cleanup() {
+    echo "Cleaning up..."
+    # Kill the port-forward process if we started it
+    if [[ -n "${PORT_FORWARD_PID:-}" ]]; then
+        kill "$PORT_FORWARD_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup EXIT
+
+echo "==> Checking workspace status..."
+WORKSPACE_STATUS=$(coder list 2>/dev/null | grep "$WORKSPACE" | awk '{print $3}')
+
+if [[ "$WORKSPACE_STATUS" != "Started" ]]; then
+    echo "==> Starting workspace $WORKSPACE..."
+    coder start "$WORKSPACE" 2>/dev/null
+fi
+
+echo "==> Starting headless Neovim on remote (port $NVIM_PORT)..."
+
+# Check if nvim is already listening on the port
+NVIM_RUNNING=$(ssh "coder.$WORKSPACE" "ss -tlnp 2>/dev/null | grep -q ':$NVIM_PORT' && echo 'yes' || echo 'no'" 2>/dev/null | grep -v "version mismatch" | tail -1)
+
+if [[ "$NVIM_RUNNING" != "yes" ]]; then
+    # Kill any existing nvim headless processes and start fresh
+    ssh "coder.$WORKSPACE" "pkill -f 'nvim --headless' 2>/dev/null || true" 2>/dev/null | grep -v "version mismatch" || true
+    
+    # Start headless nvim, optionally in a specific directory
+    if [[ -n "$REMOTE_DIR" ]]; then
+        ssh "coder.$WORKSPACE" "cd '$REMOTE_DIR' && nohup nvim --headless --listen 127.0.0.1:$NVIM_PORT </dev/null >/dev/null 2>&1 & disown" 2>/dev/null | grep -v "version mismatch" || true
+    else
+        ssh "coder.$WORKSPACE" "nohup nvim --headless --listen 127.0.0.1:$NVIM_PORT </dev/null >/dev/null 2>&1 & disown" 2>/dev/null | grep -v "version mismatch" || true
+    fi
+    sleep 2
+    echo "   Headless Neovim started"
+else
+    echo "   Headless Neovim already running"
+fi
+
+echo "==> Setting up port forwarding..."
+
+# Check if port is already forwarded locally
+if ss -tlnp 2>/dev/null | grep -q ":$NVIM_PORT"; then
+    echo "   Port $NVIM_PORT already forwarded"
+else
+    # Start port forwarding in background
+    coder port-forward "$WORKSPACE" --tcp "$NVIM_PORT:$NVIM_PORT" >/dev/null 2>&1 &
+    PORT_FORWARD_PID=$!
+    sleep 2
+    echo "   Port forwarding established (PID: $PORT_FORWARD_PID)"
+fi
+
+echo "==> Connecting Neovim remote-ui to 127.0.0.1:$NVIM_PORT..."
+echo ""
+
+# Connect local nvim as remote UI
+nvim --remote-ui --server "127.0.0.1:$NVIM_PORT"
