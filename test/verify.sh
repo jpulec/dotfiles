@@ -27,6 +27,7 @@ check "fzf installed" "command -v fzf"
 check "ripgrep installed" "command -v rg"
 check "tmux installed" "command -v tmux"
 check "zoxide installed" "command -v zoxide"
+check "fnm installed" "command -v fnm"
 check "direnv installed" "command -v direnv"
 check "gh (GitHub CLI) installed" "command -v gh"
 

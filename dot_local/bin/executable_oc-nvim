@@ -1,3 +1,15 @@
 #!/usr/bin/env bash
-export ANTHROPIC_API_KEY=$(op read --account createxyz.1password.com --no-newline "op://Employee/Anthropic API Key/credential")
+
+set -euo pipefail
+
+op_account="${OP_ACCOUNT:-createxyz.1password.com}"
+anthropic_ref="${ANTHROPIC_OP_REF:-op://Employee/Anthropic API Key/credential}"
+
+anthropic_api_key="$(op read --account "$op_account" --no-newline "$anthropic_ref")"
+if [[ -z "$anthropic_api_key" ]]; then
+  echo "Failed to read Anthropic API key from 1Password reference: $anthropic_ref"
+  exit 1
+fi
+
+export ANTHROPIC_API_KEY="$anthropic_api_key"
 exec opencode "$@"

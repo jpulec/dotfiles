@@ -2,7 +2,11 @@ set --global --export EDITOR nvim
 fish_add_path ~/.local/bin
 fish_add_path ~/.local/share/gem/ruby/3.3.0/bin
 fish_add_path ~/.npm-global/bin
-set --global --export NODE_OPTIONS "--experimental-sqlite"
+if set -q CODER_AGENT_TOKEN
+  set --erase NODE_OPTIONS
+else
+  set --global --export NODE_OPTIONS "--experimental-sqlite"
+end
 
 # Initialize zoxide (smart cd)
 zoxide init fish | source
@@ -43,11 +47,10 @@ direnv hook fish | source
 set --global --export SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
 set --global --export GPG_TTY (tty)
 
-# Auto set using nvmrc
-function __nvm_auto --on-variable PWD
-  nvm use --silent 2>/dev/null
+# Initialize fnm and auto-switch versions from .nvmrc/.node-version
+if command -q fnm
+  fnm env --use-on-cd --shell fish | source
 end
-__nvm_auto
 
 if status --is-interactive
   set --global fish_key_bindings fish_default_key_bindings
@@ -81,7 +84,15 @@ if status --is-interactive
   set --global fish_pager_color_progress brwhite --background=cyan
   set --global fish_pager_color_selected_background -r
 
-  powerline-daemon -q
-  set --global fish_function_path $fish_function_path "/usr/lib/python3.14/site-packages/powerline/bindings/fish"
-  powerline-setup
+  if command -q powerline-daemon
+    powerline-daemon -q
+  end
+
+  if test -d "/usr/lib/python3.14/site-packages/powerline/bindings/fish"
+    set --global fish_function_path $fish_function_path "/usr/lib/python3.14/site-packages/powerline/bindings/fish"
+  end
+
+  if command -q powerline-setup
+    powerline-setup
+  end
 end

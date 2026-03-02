@@ -21,6 +21,7 @@ sudo pacman -S --needed --noconfirm \
   neovim \
   ripgrep \
   tmux \
+  unzip \
   zoxide
 
 {{ else if eq .chezmoi.osRelease.id "ubuntu" -}}
@@ -69,6 +70,7 @@ retry_apt sudo apt-get install -y -qq \
   man-db \
   ripgrep \
   tmux \
+  unzip \
   zoxide
 
 # bat is installed as batcat on Ubuntu - symlink it
@@ -88,6 +90,14 @@ if ! command -v nvim >/dev/null 2>&1; then
 fi
 
 {{ end -}}
+
+# Install fnm without modifying shell startup files
+if ! command -v fnm >/dev/null 2>&1; then
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.local/share/fnm"
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$HOME/.local/share/fnm/fnm" "$HOME/.local/bin/fnm"
+fi
+
 # Set fish as default shell (applies to all distros)
 if [ "$(getent passwd "$(whoami)" | cut -d: -f7)" != "$(which fish)" ]; then
     sudo chsh -s "$(which fish)" "$(whoami)"
