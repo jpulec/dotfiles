@@ -44,6 +44,15 @@ retry_apt() {
     return 1
 }
 
+# When running under Coder, wait for the template startup script to finish
+# its apt operations first, so we don't steal the lock and break its installs
+if [ -n "$CODER_AGENT_TOKEN" ]; then
+    echo "Waiting for Coder startup apt operations to finish..."
+    while sudo fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+        sleep 2
+    done
+fi
+
 # Add fish PPA for latest version
 if ! command -v fish >/dev/null 2>&1; then
     sudo apt-add-repository -y --no-update ppa:fish-shell/release-3
