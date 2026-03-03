@@ -9,7 +9,9 @@ else
 end
 
 # Initialize zoxide (smart cd)
-zoxide init fish | source
+if command -q zoxide
+  zoxide init fish | source
+end
 
 ## Aliases
 # Alias sudo so that aliases work
@@ -42,10 +44,14 @@ set --global --export RIPGREP_CONFIG_PATH ~/.ripgreprc
 # Bat stuff
 set --global --export BAT_THEME Dracula
 
-direnv hook fish | source
+if command -q direnv
+  direnv hook fish | source
+end
 
 set --global --export SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
-set --global --export GPG_TTY (tty)
+if status --is-interactive
+  set --global --export GPG_TTY (tty)
+end
 
 # Initialize fnm and auto-switch versions from .nvmrc/.node-version
 if command -q fnm
