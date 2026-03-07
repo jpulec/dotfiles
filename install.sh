@@ -13,9 +13,9 @@ fi
 # If running from the cloned repo, use the current directory
 # Otherwise, clone from GitHub
 if [ -f "$(dirname "$0")/.chezmoiignore" ]; then
-    chezmoi init --source="$(dirname "$0")" --apply
+    chezmoi init --source="$(dirname "$0")" --force --apply
 else
-    chezmoi init jpulec --apply
+    chezmoi init jpulec --force --apply
 fi
 
 echo "Dotfiles applied!"
