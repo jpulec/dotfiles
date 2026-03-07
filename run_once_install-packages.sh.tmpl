@@ -8,13 +8,8 @@ if [ -n "$GRIEVER_INSTALL" ]; then
     exit 0
 fi
 
-# Keep Coder startup fast and avoid blocking on sudo/apt/download steps.
-# The workspace image/startup script should handle system provisioning.
-# Set DOTFILES_INSTALL_PACKAGES_IN_CODER=1 to opt in.
-if [ -n "$CODER_AGENT_TOKEN" ] && [ "${DOTFILES_INSTALL_PACKAGES_IN_CODER:-0}" != "1" ]; then
-    echo "Running under Coder, skipping package/bootstrap install"
-    exit 0
-fi
+# Run package/bootstrap install in Coder too.
+# We handle apt lock contention below via explicit wait/retry logic.
 
 {{ if eq .chezmoi.osRelease.id "arch" -}}
 # Arch Linux

@@ -2,15 +2,6 @@
 # Install fisher plugins from fish_plugins file
 # {{ include "private_dot_config/fish/fish_plugins" | sha256sum }}
 
-# Keep Coder startup fast by default.
-# Set DOTFILES_INSTALL_FISHER_IN_CODER=1 to opt in.
-if set -q CODER_AGENT_TOKEN
-    if test "$DOTFILES_INSTALL_FISHER_IN_CODER" != "1"
-        echo "Running under Coder, skipping fisher plugin install"
-        exit 0
-    end
-end
-
 # Install fisher if not present
 if not type -q fisher
     echo "Installing fisher..."
