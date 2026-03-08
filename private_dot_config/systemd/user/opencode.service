@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenCode server
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/opencode-server.fish
+Restart=on-failure
+RestartSec=2
+Environment=OP_ACCOUNT=createxyz.1password.com
+Environment=BASH_ENV=%h/.config/opencode/fnm-init.sh
+
+[Install]
+WantedBy=default.target

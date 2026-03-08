@@ -1,0 +1,6 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env fish
+
+echo "Enabling opencode service..."
+systemctl --user enable opencode.service
+{{ end -}}
