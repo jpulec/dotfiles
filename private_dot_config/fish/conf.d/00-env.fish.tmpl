@@ -38,3 +38,28 @@ set --global --export LESS "-R --mouse --wheel-lines=3"
 
 set --global --export SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
 set --global --export GPG_TTY (tty)
+
+# `done` notification filter. Patterns are PCRE-style fish regexes matched
+# against the full command line; any match suppresses the notification.
+# Default upstream is just `^git (?!push|pull|fetch)`; we add common
+# noise-generators: interactive TUIs (vim, less, lazygit), long-running dev
+# servers (yarn dev, etc.), and pager/tail commands.
+set --global __done_exclude \
+    '^git (?!push|pull|fetch)' \
+    '^v(im?|i)?$' \
+    '^nvim' \
+    '^less' \
+    '^man ' \
+    '^htop$' \
+    '^btop$' \
+    '^top$' \
+    '^lazy(git|docker)' \
+    '^ssh\b' \
+    '^journalctl' \
+    '^tail -f' \
+    '^bat$' \
+    '^bat ' \
+    '^(yarn|npm|bun|pnpm) (run )?(dev|start|watch)' \
+    '^(yarn|npm|bun|pnpm) turbo (run )?(dev|watch)' \
+    '^docker compose (logs|exec)' \
+    '^doppler run -- (yarn|npm|bun|pnpm) (run )?(dev|start|watch)'
