@@ -1,0 +1,71 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Powerline-like prompt tuned to match your original shell layout:
+# - left: user pill -> path segment -> outgoing chevron -> cursor
+# - right: status (ST N) + git branch segment
+# - colors: Dracula palette
+
+palette = "dracula"
+add_newline = false
+scan_timeout = 30
+command_timeout = 500
+
+format = """
+$username[](fg:purple bg:current)$directory[](fg:current bg:bg)$character"""
+
+right_format = """
+$status$git_branch"""
+
+[username]
+show_always = true
+style_user = "bg:purple fg:fg bold"
+style_root = "bg:purple fg:fg bold"
+format = "[ $user ]($style)"
+
+[directory]
+style = "bg:current fg:fg"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "… › "
+truncate_to_repo = true
+
+[directory.substitutions]
+"/" = " › "
+
+[character]
+# Keep one subtle spacer between the final chevron and the cursor.
+format = " $symbol"
+success_symbol = ""
+error_symbol = ""
+vimcmd_symbol = ""
+
+[status]
+disabled = false
+style = "bg:bg fg:orange"
+symbol = ""
+success_symbol = ""
+format = "[ ST $status ]($style)"
+
+[git_branch]
+symbol = ""
+# Match the directory pill bg (current = #44475a) so the right side feels like
+# a mirror of the left rather than a separate bright accent. fg uses the same
+# muted gray-blue as the middle path separators for visual consistency.
+style = "bg:current fg:#a9b0c6"
+format = "[](fg:current bg:bg)[  $branch ]($style)"
+
+[git_status]
+disabled = true
+
+[palettes.dracula]
+bg      = "#282a36"
+current = "#44475a"
+fg      = "#f8f8f2"
+comment = "#6272a4"
+cyan    = "#8be9fd"
+green   = "#50fa7b"
+orange  = "#ffb86c"
+pink    = "#ff79c6"
+purple  = "#bd93f9"
+red     = "#ff5555"
+yellow  = "#f1fa8c"

@@ -3,3 +3,10 @@
 [merge]
   command = "nvim"
   args = ["-d", "{{ .Destination }}", "{{ .Source }}", "{{ .Target }}"]
+
+# Personal values referenced from templates in dotfiles source. Add new entries
+# here when introducing a new {{ .foo }} reference in a *.tmpl file. Other
+# machines need their own values populated; defaults could be set in source
+# templates via `{{ .ngrok_user | default "" }}` if forking is a goal.
+[data]
+  ngrok_user = "jpulec"

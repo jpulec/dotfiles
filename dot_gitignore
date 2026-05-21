@@ -87,3 +87,9 @@ tags.temp
 
 # Personal files
 _james.*
+
+.overseer
+
+# Local secrets directory (chmod 700, ~/secrets/)
+secrets/
+

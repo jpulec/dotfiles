@@ -1,0 +1,40 @@
+set --global --export EDITOR nvim
+
+# Add user-managed paths to fish_user_paths. fish_add_path is idempotent (does
+# nothing if the path is already present), so this is safe on every shell. The
+# values persist in ~/.config/fish/fish_variables, but we re-assert them here
+# so a fresh install (no fish_variables yet) still gets a correct $PATH after
+# `chezmoi apply`.
+fish_add_path $HOME/.local/bin
+fish_add_path $HOME/.npm-global/bin
+fish_add_path $HOME/.local/share/gem/ruby/3.3.0/bin
+
+set --global --export NODE_OPTIONS "--experimental-sqlite"
+
+# Global npm install prefix. Lives here (not ~/.npmrc) because npm 9+ deprecated
+# setting prefix via the rc file -- env var is the supported way going forward.
+# `npm install -g foo` -> ~/.npm-global/lib/node_modules/foo
+# `~/.npm-global/bin` is on $PATH via fish_user_paths (set universally).
+set --global --export NPM_CONFIG_PREFIX $HOME/.npm-global
+
+# Set ripgrep as default for FZF
+set --global --export FZF_DEFAULT_COMMAND 'rg --files --hidden'
+
+set --global --export COMPOSE_HTTP_TIMEOUT 200
+set --global --export PIPENV_VENV_IN_PROJECT 1
+set --global pipenv_fish_fancy yes
+
+# TODO: Consider dropping this in favor of cloudflared or something else
+set --global --export LOCAL_TUNNEL https://{{ .ngrok_user }}.ngrok.io
+
+set --global --export RIPGREP_CONFIG_PATH $HOME/.ripgreprc
+
+# Bat stuff
+set --global --export BAT_THEME Dracula
+
+# less: -R for raw color codes, --mouse for wheel scrolling, --wheel-lines=3
+# for sensible speed
+set --global --export LESS "-R --mouse --wheel-lines=3"
+
+set --global --export SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
+set --global --export GPG_TTY (tty)

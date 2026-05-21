@@ -1,4 +1,30 @@
+# Display
 --max-columns=150
 --max-columns-preview
 
+# Search behavior
 --smart-case
+--hidden
+
+# Common noise to skip. Use --no-ignore or --no-ignore-vcs to bypass when
+# explicitly searching inside these.
+--glob=!.git
+--glob=!node_modules
+--glob=!.next
+--glob=!.turbo
+--glob=!dist
+--glob=!build
+--glob=!coverage
+--glob=!.venv
+--glob=!__pycache__
+--glob=!*.lock
+--glob=!*.min.js
+--glob=!*.min.css
+--glob=!yarn.lock
+--glob=!pnpm-lock.yaml
+--glob=!package-lock.json
+--glob=!bun.lock
+--glob=!bun.lockb
+--glob=!Cargo.lock
+--glob=!uv.lock
+--glob=!poetry.lock

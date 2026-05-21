@@ -1,33 +1,50 @@
 #!/usr/bin/env fish
-# Helper script for wt-workspace: creates worktree with loading animation
-# Usage: wt-workspace-create <worktree-dir> <worktree-name> <base-branch>
+# Helper for wt-workspace: creates a worktree with a loading animation, then
+# runs per-repo setup (envrc, compose overrides, doppler, install).
+#
+# Usage: wt-workspace-create <repo-name> <worktree-name> <base-branch>
+# repo-name resolves to ~/.config/wt-workspace/repos/<repo-name>.fish
 
-set WORKTREE_DIR $argv[1]
-set worktree_name $argv[2]
-set base_branch $argv[3]
-set worktree_path "$WORKTREE_DIR/$worktree_name"
-set branch_name "_$worktree_name"
+set --local CONFIG_DIR "$HOME/.config/wt-workspace/repos"
 
-# Check if branch already exists
-set branch_exists false
-if git -C "$WORKTREE_DIR" show-ref --verify --quiet "refs/heads/$branch_name"
+set --local repo_name $argv[1]
+set --local worktree_name $argv[2]
+set --local base_branch $argv[3]
+
+if test -z "$repo_name" -o -z "$worktree_name" -o -z "$base_branch"
+    printf "Usage: wt-workspace-create <repo-name> <worktree-name> <base-branch>\n"
+    read -P "Press enter to close..."
+    exit 1
+end
+
+set --local config_file "$CONFIG_DIR/$repo_name.fish"
+if not test -f "$config_file"
+    printf "Config not found: %s\n" "$config_file"
+    read -P "Press enter to close..."
+    exit 1
+end
+source "$config_file"
+
+set --local worktree_path "$WT_REPO_DIR/$worktree_name"
+set --local branch_name "$WT_BRANCH_PREFIX$worktree_name"
+
+# ---- create the worktree (with spinner) ------------------------------------
+
+set --local branch_exists false
+if git -C "$WT_REPO_DIR" show-ref --verify --quiet "refs/heads/$branch_name"
     set branch_exists true
 end
 
-# Start git worktree add in background
-set tmpfile (mktemp)
+set --local tmpfile (mktemp)
 if test "$branch_exists" = true
-    # Branch exists, just add worktree using existing branch
-    fish -c "git -C '$WORKTREE_DIR' worktree add '$worktree_path' '$branch_name' &>$tmpfile; echo \$status > $tmpfile.status" &
+    fish -c "git -C '$WT_REPO_DIR' worktree add '$worktree_path' '$branch_name' &>$tmpfile; echo \$status > $tmpfile.status" &
 else
-    # Create new branch
-    fish -c "git -C '$WORKTREE_DIR' worktree add -b '$branch_name' '$worktree_path' '$base_branch' &>$tmpfile; echo \$status > $tmpfile.status" &
+    fish -c "git -C '$WT_REPO_DIR' worktree add -b '$branch_name' '$worktree_path' '$base_branch' &>$tmpfile; echo \$status > $tmpfile.status" &
 end
-set git_pid $last_pid
+set --local git_pid $last_pid
 
-# Spinner animation
-set spinner '⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏'
-set i 1
+set --local spinner '⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏'
+set --local i 1
 
 printf "\n"
 while kill -0 $git_pid 2>/dev/null
@@ -40,39 +57,96 @@ while kill -0 $git_pid 2>/dev/null
     sleep 0.08
 end
 
-# Wait for process and get status
 wait $git_pid
-set git_status (cat $tmpfile.status 2>/dev/null; or echo 1)
+set --local git_status (cat $tmpfile.status 2>/dev/null; or echo 1)
 
-printf "\r\e[K"  # Clear the line
+printf "\r\e[K"
 
-if test "$git_status" -eq 0
-    printf "  \e[1;32m✓\e[0m Worktree '\e[1;36m%s\e[0m' created!\n" $worktree_name
-    rm -f $tmpfile $tmpfile.status
-
-    # Create .envrc file
-    printf "source_up\n\nexport COMPOSE_PROJECT_NAME=%s\n" $worktree_name > "$worktree_path/.envrc"
-    printf "  \e[1;32m✓\e[0m Created .envrc\n"
-
-    # Allow direnv
-    direnv allow "$worktree_path"
-    printf "  \e[1;32m✓\e[0m Ran direnv allow\n"
-
-    # Setup Doppler for secrets
-    if command -q doppler
-        doppler setup --no-interactive -c "$worktree_path" >/dev/null 2>&1
-        and printf "  \e[1;32m✓\e[0m Ran doppler setup\n"
-        or printf "  \e[1;33m⚠\e[0m Doppler setup skipped (no config found)\n"
-    end
-
-    printf "\n"
-    cd $worktree_path
-    exec fish
-else
+if test "$git_status" -ne 0
     printf "  \e[1;31m✗\e[0m Failed to create worktree\n\n"
-    printf "\e[2m"  # Dim
+    printf "\e[2m"
     cat $tmpfile
     printf "\e[0m\n"
     rm -f $tmpfile $tmpfile.status
     read -P "Press enter to close..."
+    exit 1
 end
+
+printf "  \e[1;32m✓\e[0m Worktree '\e[1;36m%s\e[0m' created!\n" $worktree_name
+rm -f $tmpfile $tmpfile.status
+
+# ---- .envrc ----------------------------------------------------------------
+
+# Build .envrc. WT_EXTRA_ENVRC may reference $worktree_name, so eval it.
+set --local extra_envrc ""
+if test -n "$WT_EXTRA_ENVRC"
+    set extra_envrc (eval "echo \"$WT_EXTRA_ENVRC\"")
+end
+
+printf "source_up\n\n%s\n" "$extra_envrc" > "$worktree_path/.envrc"
+printf "  \e[1;32m✓\e[0m Created .envrc\n"
+
+direnv allow "$worktree_path"
+printf "  \e[1;32m✓\e[0m Ran direnv allow\n"
+
+# ---- optional docker-compose override symlink ------------------------------
+
+if test -n "$WT_COMPOSE_OVERRIDE_SRC" -a -n "$WT_COMPOSE_OVERRIDE_DEST"
+    if test -f "$WT_COMPOSE_OVERRIDE_SRC"
+        set --local dest "$worktree_path/$WT_COMPOSE_OVERRIDE_DEST"
+        mkdir -p (dirname "$dest")
+        ln -sf "$WT_COMPOSE_OVERRIDE_SRC" "$dest"
+        printf "  \e[1;32m✓\e[0m Linked docker-compose local overrides\n"
+    end
+end
+
+# ---- doppler ---------------------------------------------------------------
+
+if command -q doppler
+    switch "$WT_DOPPLER_MODE"
+        case yaml
+            # When a doppler.yaml is present in the worktree, a single
+            # `doppler setup --no-interactive` configures every path it lists.
+            if doppler setup --no-interactive --scope "$worktree_path" >/dev/null 2>&1
+                printf "  \e[1;32m✓\e[0m Ran doppler setup\n"
+            else
+                printf "  \e[1;33m⚠\e[0m doppler setup failed (run manually)\n"
+            end
+        case apps
+            set --local doppler_ok true
+            set --local config "$WT_DOPPLER_CONFIG"
+            if test -z "$config"
+                set config "dev_personal"
+            end
+            for pair in $WT_DOPPLER_APPS
+                set --local app_dir (string split ':' $pair)[1]
+                set --local project (string split ':' $pair)[2]
+                if not doppler setup --no-interactive --project $project --config $config --scope "$worktree_path/$app_dir" >/dev/null 2>&1
+                    printf "  \e[1;33m⚠\e[0m Doppler setup failed for %s\n" $app_dir
+                    set doppler_ok false
+                end
+            end
+            if test "$doppler_ok" = true
+                printf "  \e[1;32m✓\e[0m Ran doppler setup\n"
+            end
+        case none ''
+            # skip
+        case '*'
+            printf "  \e[1;33m⚠\e[0m Unknown WT_DOPPLER_MODE '%s', skipping\n" "$WT_DOPPLER_MODE"
+    end
+end
+
+# ---- install ---------------------------------------------------------------
+
+if test -n "$WT_INSTALL_CMD"
+    printf "  … Running %s (this may take a moment)...\n" "$WT_INSTALL_CMD"
+    if direnv exec "$worktree_path" fish -c "cd '$worktree_path' && $WT_INSTALL_CMD" >/dev/null 2>&1
+        printf "\r\e[A\e[K  \e[1;32m✓\e[0m Ran %s\n" "$WT_INSTALL_CMD"
+    else
+        printf "\r\e[A\e[K  \e[1;33m⚠\e[0m %s failed (run manually)\n" "$WT_INSTALL_CMD"
+    end
+end
+
+printf "\n"
+cd $worktree_path
+exec fish

@@ -1,62 +1,6 @@
-set --global --export EDITOR nvim
-fish_add_path ~/.local/bin
-fish_add_path ~/.local/share/gem/ruby/3.3.0/bin
-fish_add_path ~/.npm-global/bin
-if set -q CODER_AGENT_TOKEN
-  set --erase NODE_OPTIONS
-else
-  set --global --export NODE_OPTIONS "--experimental-sqlite"
-end
-
-# Initialize zoxide (smart cd)
-if command -q zoxide
-  zoxide init fish | source
-end
-
-## Aliases
-# Alias sudo so that aliases work
-alias sudo='sudo '
-alias docker-compose="docker compose"
-
-## Chezmoi helpers (two-repo setup: dotfiles + griever)
-function chezmoi-hierarchical --description "Apply both dotfiles and griever configs"
-    chezmoi apply $argv
-    chezmoi apply --source=~/.local/share/griever $argv
-end
-
-function chezmoi-update --description "Update both dotfiles and griever"
-    chezmoi update
-    git -C ~/.local/share/griever pull
-    chezmoi apply --source=~/.local/share/griever
-end
-
-# Set ripgrep as default for FZF
-set --global --export FZF_DEFAULT_COMMAND 'rg --files --hidden'
-
-set --global --export COMPOSE_HTTP_TIMEOUT 200
-set --global --export PIPENV_VENV_IN_PROJECT 1
-set --global pipenv_fish_fancy yes
-
-# TODO: Consider dropping this in favor of cloudflared or something else
-set --global --export LOCAL_TUNNEL https://jpulec.ngrok.io
-set --global --export RIPGREP_CONFIG_PATH ~/.ripgreprc
-
-# Bat stuff
-set --global --export BAT_THEME Dracula
-
-if command -q direnv
-  direnv hook fish | source
-end
-
-set --global --export SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
-if status --is-interactive
-  set --global --export GPG_TTY (tty)
-end
-
-# Initialize fnm and auto-switch versions from .nvmrc/.node-version
-if command -q fnm
-  fnm env --use-on-cd --shell fish | source
-end
+# Environment, aliases, and tool init live in conf.d/*.fish.
+# Functions live in functions/*.fish.
+# This file is for interactive prompt and theme setup only.
 
 if status --is-interactive
   set --global fish_key_bindings fish_default_key_bindings
@@ -90,15 +34,6 @@ if status --is-interactive
   set --global fish_pager_color_progress brwhite --background=cyan
   set --global fish_pager_color_selected_background -r
 
-  if command -q powerline-daemon
-    powerline-daemon -q
-  end
-
-  if test -d "/usr/lib/python3.14/site-packages/powerline/bindings/fish"
-    set --global fish_function_path $fish_function_path "/usr/lib/python3.14/site-packages/powerline/bindings/fish"
-  end
-
-  if command -q powerline-setup
-    powerline-setup
-  end
+  # Prompt: starship. Config lives in ~/.config/starship.toml.
+  starship init fish | source
 end

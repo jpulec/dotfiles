@@ -1,1 +1,4 @@
-prefix=${HOME}/.npm-global
+# Intentionally empty. Global install prefix is set via the NPM_CONFIG_PREFIX
+# environment variable in ~/.config/fish/conf.d/00-env.fish.
+#
+# npm 9+ deprecated setting `prefix` here in favor of CLI/env mechanisms.

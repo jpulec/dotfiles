@@ -32,3 +32,5 @@ __pycache__
 # Create stuff
 apps/cli/lib/
 apps/gh-app/lib/
+
+drivers/legacy/

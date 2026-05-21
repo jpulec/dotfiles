@@ -1,6 +1,6 @@
 [user]
-	name = "James Pulec"
-  email = "jpulec@gmail.com"
+  name = James Pulec
+  email = jpulec@gmail.com
   signingkey = 9E8ED07CC1CBBF56
 
 [color]
@@ -51,10 +51,26 @@
   wt = worktree
   wtl = worktree list
   squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
+  # semantic diff via difftastic; works like `git diff` but uses difft
+  dft = difftool -t difftastic
+  # show a single commit with difftastic
+  dfts = -c diff.external=difft show --ext-diff
+  # log with difftastic patches
+  dftl = -c diff.external=difft log --ext-diff -p
 
 [diff]
   tool = nvim -d
-  algorithm = patience
+  algorithm = histogram
+  colorMoved = zebra
+
+[difftool "difftastic"]
+  cmd = difft "$LOCAL" "$REMOTE"
+
+[difftool]
+  prompt = false
+
+[pager]
+  difftool = true
 
 [diff "nodiff"]
   command = /bin/true
@@ -67,6 +83,10 @@
   name = My Yarn Fixer
   driver = yarn install
 
+[merge "mergiraf"]
+	name = mergiraf
+	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P
+
 [mergetool "fugitive"]
   cmd  = "nvim -f -c \"Gvdiffsplit!\" \"$MERGED\""
 
@@ -76,6 +96,22 @@
 
 [pull]
   rebase = true
+
+[fetch]
+  prune = true
+  writeCommitGraph = true
+
+[gc]
+  writeCommitGraph = true
+
+[branch]
+  sort = -committerdate
+
+[column]
+  ui = auto
+
+[rebase]
+  updateRefs = true
 
 [commit]
   gpgsign = true
@@ -89,11 +125,24 @@
 
 [init]
 	defaultBranch = main
-[safe]
-	directory = /tmp/clone
 [http]
 	postBuffer = 157286400
-	version = HTTP/1.1
+  version = HTTP/1.1
+	lowSpeedLimit = 1000
+	lowSpeedTime = 30
+
+[rerere]
+  enabled = true
 
 [submodule]
   recurse = true
+[merge "yarn"]
+	name = yarn lockfile merge driver
+	driver = yarn install
+	recursive = binary
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
