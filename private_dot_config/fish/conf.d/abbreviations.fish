@@ -73,5 +73,14 @@ abbr --add l ls -CF
 
 abbr --add oc opencode attach http://localhost:4096 --dir=.
 
+# Chezmoi drift across both sources (dotfiles + griever).
+# The starship prompt nags via `!cz` when either has uncommitted changes;
+# this is the quick command to see what's drifted.
+abbr --add chezdiff "chezmoi diff; and chezmoi diff --source=$HOME/.local/share/griever"
+
 # Neovim abbreviations
-abbr --add nvd 'nvim "+DiffviewOpen HEAD"'
+# The Snacks dashboard has bindings for diff review (d/D/h). Launching nvim
+# with +cmd runs Diffview during startup and races with snacks dashboard,
+# bufferline, lazy-loading etc., which breaks file-panel keymaps. Just open
+# nvim and press the dashboard key instead.
+abbr --add nvd nvim

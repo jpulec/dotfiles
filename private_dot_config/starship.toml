@@ -14,7 +14,7 @@ format = """
 $username[](fg:purple bg:current)$directory[](fg:current bg:bg)$character"""
 
 right_format = """
-$status$git_branch"""
+${custom.chezmoi_drift}$status$git_branch"""
 
 [username]
 show_always = true
@@ -56,6 +56,19 @@ format = "[](fg:current bg:bg)[  $branch ]($style)"
 
 [git_status]
 disabled = true
+
+# Visual nag when either chezmoi source has uncommitted local changes.
+# Renders a yellow `[!cz]` on the right side. Click-target / reminder to
+# `chezmoi re-add` and commit before drift accumulates.
+#
+# Cheap: two `git status --porcelain` calls in worktrees that are usually small.
+# The `command_timeout` (500ms default) caps any pathological cases.
+[custom.chezmoi_drift]
+when = """test -n "$(git -C $HOME/.local/share/chezmoi status --porcelain 2>/dev/null)$(git -C $HOME/.local/share/griever status --porcelain 2>/dev/null)" """
+shell = ["sh", "--norc", "--noprofile"]
+style = "bg:bg fg:yellow"
+format = "[ !cz ]($style)"
+description = "Shows when chezmoi sources have uncommitted local changes"
 
 [palettes.dracula]
 bg      = "#282a36"

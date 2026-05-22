@@ -1,8 +1,41 @@
 gui:
   sidePanelWidth: 0.2
   scrollHeight: 4
+  showFileTree: true
+  # auto-stacks the diff panel vertically on narrow screens
+  mainPanelSplitMode: flexible
+  showBottomLine: false
+
+# don't make us press enter to return after subprocess commands (e.g. our `D` difftastic binding)
+promptToReturnFromSubprocess: false
 
 git:
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
+customCommands:
+  # `less -+F` explicitly unsets the F (quit-if-one-screen) flag that git
+  # forces on via LESS=FRX, so short diffs still wait for `q`.
+  # For untracked files we use `bat` instead of difftastic, since diffing
+  # against /dev/null produces a useless wall of "added" green; bat gives
+  # proper syntax highlighting for the whole file.
+  - key: "D"
+    context: "files"
+    description: "Diff file with difftastic (or view new file with bat)"
+    command: >-
+      {{ if not .SelectedFile.Tracked -}}
+        bat --paging=always --color=always --file-name='[NEW FILE] {{.SelectedFile.Name}}' {{.SelectedFile.Name | quote}}
+      {{- else -}}
+        git -c diff.external=difft -c 'pager.diff=less -R -+F' diff --ext-diff HEAD -- {{.SelectedFile.Name | quote}}
+      {{- end }}
+    output: terminal
+  - key: "D"
+    context: "commits"
+    description: "Show commit with difftastic"
+    command: "git -c diff.external=difft -c 'pager.show=less -R -+F' show --ext-diff {{.SelectedLocalCommit.Sha}}"
+    output: terminal
+  - key: "D"
+    context: "commitFiles"
+    description: "Show file in commit with difftastic"
+    command: "git -c diff.external=difft -c 'pager.show=less -R -+F' show --ext-diff {{.SelectedCommit.Sha}} -- {{.SelectedCommitFile.Name | quote}}"
+    output: terminal

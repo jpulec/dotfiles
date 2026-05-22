@@ -9,6 +9,7 @@ return {
 			{ "<leader>c", group = "code" },
 			{ "<leader>g", group = "git" },
 			{ "<leader>n", group = "notifications" },
+			{ "<leader>o", group = "obsidian / opencode" },
 			{ "<leader>q", group = "session" },
 			{ "<leader>r", group = "refactor" },
 			{ "<leader>s", group = "search/replace" },

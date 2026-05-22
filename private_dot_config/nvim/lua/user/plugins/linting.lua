@@ -3,15 +3,12 @@ return {
 		"mfussenegger/nvim-lint",
 		opts = {
 			-- Event to trigger linters
-			events = { "BufWritePost", "BufReadPost", "InsertLeave", "TextChanged" },
+			events = { "BufWritePost", "BufReadPost", "InsertLeave" },
 			linters_by_ft = {
 				actionlint = { "actionlint" },
 				dotenv = { "dotenv_linter" },
 				fish = { "fish" },
-				javascript = { "oxlint" },
-				javascriptreact = { "oxlint" },
-				typescript = { "oxlint" },
-				typescriptreact = { "oxlint" },
+
 				["*"] = { "cspell" },
 			},
 		},

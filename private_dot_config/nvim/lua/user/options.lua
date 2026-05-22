@@ -2,6 +2,15 @@ local o = vim.opt
 
 o.completeopt = { "menuone", "noselect" } -- mostly for cmp
 
+-- System clipboard sharing (requires xclip/xsel/wl-clipboard on Linux).
+o.clipboard = "unnamedplus"
+
+-- Confirm before abandoning an unsaved buffer instead of failing silently.
+o.confirm = true
+
+-- Global statusline (single status line at the bottom instead of per-window).
+o.laststatus = 3
+
 -- Better case handling
 o.ignorecase = true -- ignore case in search patterns
 o.smartcase = true
@@ -16,8 +25,7 @@ o.mouse = "a"
 o.number = true
 o.relativenumber = true
 
--- Enable Spell checking
-o.spell = true
+-- Spell checking (enabled per-filetype in autocommands.lua)
 o.spelllang = "en"
 o.spellfile = vim.fn.expand("~") .. "/.config/nvim/spell/en.utf-8.add"
 
@@ -56,6 +64,10 @@ o.undofile = true
 
 o.updatetime = 300
 
+-- Limit matchparen bracket-matching search time (default 300ms blocks cursor movement on large files)
+vim.g.matchparen_timeout = 30
+vim.g.matchparen_insert_timeout = 30
+
 o.shortmess:append("c")
 o.iskeyword:append("-")
 
@@ -67,9 +79,7 @@ o.foldlevel = 99 -- Open most folds by default
 o.foldlevelstart = 99 -- Start with all folds open
 o.foldnestmax = 3 -- Max nested folds
 
--- Use treesitter for folds
-o.foldmethod = "expr"
-o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- Treesitter folds are set per-filetype in autocommands.lua
 
-o.shell = "/usr/bin/fish"
+o.shell = "/bin/sh"
 

@@ -8,12 +8,21 @@ return {
 		lazygit = { enabled = true },
 		quickfile = { enabled = true },
 		bufdelete = { enabled = true },
+		-- Replaces dressing.nvim input; picker replaces dressing.select.
+		input = { enabled = true },
+		picker = { enabled = true },
 		indent = {
 			enabled = true,
 			char = "▏",
-			scope = { enabled = true },
+			scope = {
+				enabled = true,
+				-- Use indent-based scope detection instead of treesitter.
+				-- Treesitter scope triggers a full parse on every CursorMoved,
+				-- which freezes the cursor on large files.
+				treesitter = { enabled = false },
+			},
 			chunk = { enabled = false },
-			animate = { enabled = false }, -- Disable animation for performance
+			animate = { enabled = false },
 		},
 		dashboard = {
 			enabled = true,
@@ -30,6 +39,36 @@ return {
 					{ icon = " ", key = "e", desc = "New File", action = ":ene | startinsert" },
 					{ icon = "󰄉 ", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
 					{ icon = "󰊄 ", key = "t", desc = "Find Text", action = ":Telescope live_grep" },
+					-- Diffview commands open in a new tab. We wipe the dashboard buffer
+					-- first so we don't leave the dashboard tab dangling behind.
+					{
+						icon = " ",
+						key = "d",
+						desc = "Review Diff (working tree)",
+						action = function()
+							vim.cmd("bwipeout")
+							vim.cmd("DiffviewOpen")
+						end,
+					},
+					{
+						icon = " ",
+						key = "D",
+						desc = "Review Diff (vs origin/main)",
+						action = function()
+							vim.cmd("bwipeout")
+							vim.cmd("DiffviewOpen origin/main...HEAD")
+						end,
+					},
+					{
+						icon = " ",
+						key = "h",
+						desc = "File History",
+						action = function()
+							vim.cmd("bwipeout")
+							vim.cmd("DiffviewFileHistory")
+						end,
+					},
+					{ icon = " ", key = "g", desc = "Lazygit", action = function() Snacks.lazygit() end },
 					{ icon = " ", key = "c", desc = "Config", action = ":e ~/.config/nvim/init.lua" },
 					{ icon = " ", key = "s", desc = "Restore Session", action = function() require("persistence").load() end },
 					{ icon = "󰅚 ", key = "q", desc = "Quit", action = ":qa" },

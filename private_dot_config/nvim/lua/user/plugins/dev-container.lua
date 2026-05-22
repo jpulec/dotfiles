@@ -3,7 +3,7 @@ return {
 		"https://codeberg.org/esensar/nvim-dev-container",
 		config = function()
 			require("devcontainer").setup({
-				log_level = "trace",
+				log_level = "warn",
 				container_runtime = "docker",
 				compose_command = "docker-compose",
 				--attach_mounts = {

@@ -1,3 +1,26 @@
+# Two chezmoi sources are in play:
+#
+#   ~/.local/share/chezmoi   (jpulec/dotfiles)
+#     Personal config that should load cleanly on any platform. `chezmoi apply`
+#     must succeed and fish must start without errors when run over SSH, on
+#     macOS, on a non-Hyprland Linux box, etc. Files may reference graphical-
+#     only tools (hyprctl, wl-copy, notify-send) inside lazy-loaded functions
+#     or per-host conditionals -- presence is fine, but startup must not break.
+#     This is where day-to-day iteration happens (fish, nvim, gitconfig, etc.).
+#
+#   ~/.local/share/griever   (jpulec/griever)
+#     Arch + Hyprland bootstrap. Personal "Omarchy". Assumes specific packages
+#     are installed (hyprland, foot, mako, walker, etc.). Touched rarely after
+#     initial machine setup. Forkable in spirit but not maintained for others.
+#
+# Apply both via the chezmoi-hierarchical fish function, or:
+#   chezmoi apply
+#   chezmoi apply --source=~/.local/share/griever
+#
+# Drift indicator: the starship prompt shows ` !cz ` when either source has
+# uncommitted local changes. Run `chezdiff` (or just `chezmoi diff` in each
+# source) and `chezmoi re-add` to capture intended changes.
+
 [diff]
   exclude = ["scripts"]
 [merge]

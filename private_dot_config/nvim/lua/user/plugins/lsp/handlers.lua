@@ -4,22 +4,21 @@ local M = {}
 M.setup = function()
 	vim.diagnostic.config({
 		virtual_text = false,
+		-- Show multi-line diagnostics only on the line under the cursor (0.11+).
+		virtual_lines = { current_line = true },
 		signs = {
 			text = {
-				[vim.diagnostic.severity.ERROR] = "",
-				[vim.diagnostic.severity.WARN] = "",
-				[vim.diagnostic.severity.HINT] = "",
-				[vim.diagnostic.severity.INFO] = "",
+				[vim.diagnostic.severity.ERROR] = "",
+				[vim.diagnostic.severity.WARN] = "",
+				[vim.diagnostic.severity.HINT] = "",
+				[vim.diagnostic.severity.INFO] = "",
 			},
 		},
-		update_in_insert = true,
+		update_in_insert = false,
 		underline = true,
 		severity_sort = true,
-		float = { border = "rounded", source = "always" },
+		float = { source = "if_many", border = "rounded" },
 	})
-
-	-- optional: set a global border for *all* floats (0.11+)
-	-- vim.o.winborder = "rounded"
 
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("UserLspAttach", { clear = true }),
@@ -49,33 +48,42 @@ M.setup = function()
 				client.server_capabilities.documentFormattingProvider = false
 			end
 
-			-- buffer-local keymaps
+			-- Inlay hints: off by default; toggle with <leader>ch.
+
+			-- Document color: nvim 0.12+ API for LSP-provided color literals (Tailwind, CSS, etc.).
+			-- Signature is `enable(enable, filter, opts)` where filter is a table, not a bufnr.
+			if vim.lsp.document_color and client:supports_method("textDocument/documentColor", bufnr) then
+				vim.lsp.document_color.enable(true, { bufnr = bufnr }, { style = "virtual" })
+			end
+
+			-- Buffer-local keymaps. Neovim 0.11+ provides these defaults for free:
+			--   K           -> vim.lsp.buf.hover
+			--   gri         -> vim.lsp.buf.implementation
+			--   grr         -> vim.lsp.buf.references
+			--   grn         -> vim.lsp.buf.rename
+			--   gra         -> vim.lsp.buf.code_action
+			--   grt (0.12)  -> vim.lsp.buf.type_definition
+			--   grx (0.12)  -> vim.lsp.codelens.run
+			--   <C-s> (ins) -> vim.lsp.buf.signature_help
+			--   [d / ]d     -> vim.diagnostic.jump
+			-- Only keys below add new behavior or override to a preferred alias.
 			local map = function(mode, lhs, rhs, desc)
 				vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, silent = true, noremap = true, desc = desc })
 			end
 			map("n", "gD", vim.lsp.buf.declaration, "LSP: Declaration")
 			map("n", "gd", vim.lsp.buf.definition, "LSP: Definition")
-			map("n", "K", function()
-				vim.lsp.buf.hover({ border = "rounded" })
-			end, "LSP: Hover")
-			map("n", "gi", vim.lsp.buf.implementation, "LSP: Implementation")
-			map("n", "<C-k>", function()
-				vim.lsp.buf.signature_help({ border = "rounded" })
-			end, "LSP: Signature")
+			-- Signature help in normal mode (insert mode uses default <C-s>).
+			map("n", "gK", vim.lsp.buf.signature_help, "LSP: Signature")
+			-- Preferred aliases for common actions.
 			map("n", "<leader>rn", vim.lsp.buf.rename, "LSP: Rename")
-			map("n", "gr", vim.lsp.buf.references, "LSP: References")
-			map("n", "<leader>ca", function()
-				vim.lsp.buf.code_action()
-			end, "LSP: Code Action")
+			map("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
+			map("n", "<leader>ch", function()
+				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+			end, "LSP: Toggle Inlay Hints")
 
-			-- optional extras
 			local ok, illuminate = pcall(require, "illuminate")
 			if ok then
 				illuminate.on_attach(client)
-			end
-			local lsp_status_ok, lsp_status = pcall(require, "lsp-status")
-			if lsp_status_ok then
-				lsp_status.on_attach(client)
 			end
 		end,
 	})

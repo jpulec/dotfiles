@@ -11,13 +11,24 @@ return {
 	},
 	{ "dracula/vim", name = "dracula", lazy = true },
 
-	"arthurxavierx/vim-caser",
+	-- vim-abolish already provides `crs/crc/crm/cru/crk/...` coercions, so vim-caser is removed.
 	"chaoren/vim-wordmotion",
 	"dag/vim-fish",
 	"jparise/vim-graphql",
 	"pantharshit00/vim-prisma",
 
-	"JoosepAlviste/nvim-ts-context-commentstring",
+	-- JSON/YAML schemas for jsonls and yamlls
+	{ "b0o/SchemaStore.nvim", lazy = true, version = false },
+
+	{
+		"JoosepAlviste/nvim-ts-context-commentstring",
+		opts = {
+			-- The CursorHold autocmd is unnecessary with the comment.nvim
+			-- integration (which calls it on-demand), and triggers treesitter
+			-- parsing on every cursor hold.
+			enable_autocmd = false,
+		},
+	},
 
 	-- Git
 	"tpope/vim-fugitive",

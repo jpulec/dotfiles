@@ -3,24 +3,24 @@ return {
 	event = { "BufWritePre" },
 	cmd = { "ConformInfo" },
 	opts = {
-		log_level = vim.log.levels.DEBUG,
+		log_level = vim.log.levels.WARN,
 		notify_on_error = true,
 		formatters_by_ft = {
 			lua = { "stylua" },
-			javascript = { "biome" }, -- "prettierd", "prettier", stop_after_first = true },
-			typescript = { "biome" }, --, "prettierd", "prettier", stop_after_first = true },
-			javascriptreact = { "biome" }, --"prettierd", "prettier", stop_after_first = true },
-			typescriptreact = { "biome" }, --"prettierd", "prettier", stop_after_first = true },
+			javascript = { "oxfmt" }, -- "prettierd", "prettier", stop_after_first = true },
+			typescript = { "oxfmt" }, --, "prettierd", "prettier", stop_after_first = true },
+			javascriptreact = { "oxfmt" }, --"prettierd", "prettier", stop_after_first = true },
+			typescriptreact = { "oxfmt" }, --"prettierd", "prettier", stop_after_first = true },
 			--javascript = { "prettierd", "prettier", stop_after_first = true },
 			--typescript = { "prettierd", "prettier", stop_after_first = true },
 			--javascriptreact = { "prettierd", "prettier", stop_after_first = true },
 			--typescriptreact = { "prettierd", "prettier", stop_after_first = true },
 			--text = {},
-			json = { "biome" },
-			markdown = { "prettierd" },
+			json = { "oxfmt" },
+			markdown = { "oxfmt" },
 			-- Use the "_" filetype to run formatters on filetypes that don't
 			-- have other formatters configured.
-			--["_"] = { "prettierd" },
+			["_"] = { "oxfmt" },
 		},
 		-- Set up format-on-save
 		format_on_save = function(bufnr)

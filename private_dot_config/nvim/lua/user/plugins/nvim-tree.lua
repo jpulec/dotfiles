@@ -96,21 +96,13 @@ return {
 				on_attach = on_attach,
 				disable_netrw = true,
 				hijack_netrw = true,
-				--ignore_ft_on_setup = {
-				--	"startify",
-				--	"dashboard",
-				--	"alpha",
-				--},
-				open_on_tab = false,
 				hijack_cursor = false,
 				diagnostics = {
 					enable = true,
-					icons = {
-						hint = "",
-						info = "",
-						warning = "",
-						error = "",
-					},
+					-- Our global LSP signs are intentionally empty strings.
+					-- nvim-tree treats empty sign text as a sign name but skips
+					-- sign_define, which later crashes on sign_place.
+					diagnostic_opts = false,
 				},
 				update_focused_file = {
 					enable = true,
@@ -118,10 +110,6 @@ return {
 						enable = true,
 						ignore_list = {},
 					},
-				},
-				system_open = {
-					cmd = nil,
-					args = {},
 				},
 				filters = {
 					custom = {
@@ -141,10 +129,6 @@ return {
 					side = "left",
 					number = false,
 					relativenumber = false,
-				},
-				trash = {
-					cmd = "trash",
-					require_confirm = true,
 				},
 				actions = {
 					open_file = {

@@ -23,6 +23,12 @@ keymap("n", "<Tab>", "<cmd>bn<CR>", { noremap = true, silent = true, desc = "Nex
 keymap("n", "<S-Tab>", "<cmd>bp<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
 keymap("n", "<leader>bd", function() Snacks.bufdelete() end, { noremap = true, silent = true, desc = "Delete buffer" })
 
+-- Keep cursor centered on big jumps and search results (and expand folds on search).
+keymap("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true, desc = "Scroll down (centered)" })
+keymap("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true, desc = "Scroll up (centered)" })
+keymap("n", "n", "nzzzv", { noremap = true, silent = true, desc = "Next search result (centered)" })
+keymap("n", "N", "Nzzzv", { noremap = true, silent = true, desc = "Previous search result (centered)" })
+
 -- Toggle wrap
 keymap("n", "<leader>w", ":set wrap! linebreak!<CR>:echo 'wrap=' . &wrap<CR>", { noremap = true, silent = true, desc = "Toggle wrap" })
 
@@ -33,20 +39,15 @@ keymap("n", "<leader>f", "<cmd>Telescope live_grep<cr>", { noremap = true, silen
 -- Nvimtree
 keymap("n", "<leader>e", ":NvimTreeToggle<cr>", { noremap = true, silent = true, desc = "Toggle file explorer" })
 
--- Diagnostics
+-- Diagnostics. [d/]d are built-in defaults in Neovim 0.11+; only severity-
+-- filtered variants are defined here.
 local diagnostic_goto = function(next, severity)
 	severity = severity and vim.diagnostic.severity[severity] or nil
 	return function()
-		if next then
-			vim.diagnostic.jump({ count = 1, float = true, severity = severity })
-		else
-			vim.diagnostic.jump({ count = -1, float = true, severity = severity })
-		end
+		vim.diagnostic.jump({ count = next and 1 or -1, float = true, severity = severity })
 	end
 end
 keymap("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-keymap("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
-keymap("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
 keymap("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
 keymap("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
 keymap("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })

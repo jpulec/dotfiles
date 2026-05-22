@@ -7,25 +7,11 @@ return {
 		},
 	},
 	{
-		"rachartier/tiny-code-action.nvim",
-		dependencies = {
-			{ "nvim-lua/plenary.nvim" },
-			{ "nvim-telescope/telescope.nvim" },
-		},
-		event = "LspAttach",
-		config = function()
-			require("tiny-code-action").setup()
-		end,
-	},
-	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"nvim-cmp",
+			"saghen/blink.cmp",
 			"mason-org/mason.nvim",
 			"mason-org/mason-lspconfig.nvim",
-			"hrsh7th/cmp-nvim-lsp",
-			"nvim-lua/lsp-status.nvim",
-			"tamago324/nlsp-settings.nvim",
 		},
 		config = function()
 			local mason = require("mason")

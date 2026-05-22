@@ -3,7 +3,6 @@ return {
 		"saghen/blink.cmp",
 		dependencies = {
 			"rafamadriz/friendly-snippets",
-			"giuxtaposition/blink-cmp-copilot",
 		},
 		version = "*",
 		opts = {
@@ -24,15 +23,7 @@ return {
 				nerd_font_variant = "mono",
 			},
 			sources = {
-				default = { "lsp", "path", "snippets", "buffer", "copilot" },
-				providers = {
-					copilot = {
-						name = "copilot",
-						module = "blink-cmp-copilot",
-						score_offset = 100,
-						async = true,
-					},
-				},
+				default = { "lsp", "path", "snippets", "buffer" },
 			},
 			completion = {
 				accept = {
@@ -80,7 +71,6 @@ return {
 							source_name = {
 								text = function(ctx)
 									local source_names = {
-										copilot = "[COPILOT]",
 										lsp = "[LSP]",
 										snippets = "[Snippet]",
 										buffer = "[Buffer]",

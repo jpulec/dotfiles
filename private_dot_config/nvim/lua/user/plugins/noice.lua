@@ -47,6 +47,14 @@ return {
 				},
 				opts = { skip = true },
 			},
+			-- Hide "No information available" from LSP hover
+			{
+				filter = {
+					event = "notify",
+					find = "No information available",
+				},
+				opts = { skip = true },
+			},
 		},
 	},
 	keys = {

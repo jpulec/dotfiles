@@ -1,6 +1,6 @@
 return {
-	"epwalsh/obsidian.nvim",
-	version = "*",
+	-- Community-maintained fork of the archived epwalsh/obsidian.nvim.
+	"obsidian-nvim/obsidian.nvim",
 	lazy = true,
 	ft = "markdown",
 	dependencies = {
@@ -10,7 +10,7 @@ return {
 		workspaces = {
 			{
 				name = "life",
-				path = "~/life",
+				path = "~/Dev/jpulec/odine",
 			},
 		},
 		daily_notes = {
@@ -19,17 +19,19 @@ return {
 			template = nil,
 		},
 		completion = {
-			nvim_cmp = true,
+			-- Switched from nvim_cmp to blink.cmp.
+			nvim_cmp = false,
+			blink = true,
 			min_chars = 2,
 		},
 		-- Don't manage frontmatter - we handle it ourselves
-		disable_frontmatter = true,
-		-- Use markdown links by default, wikilinks also work
-		preferred_link_style = "wiki",
-		-- Open links in current window
-		follow_url_func = function(url)
-			vim.fn.jobstart({ "xdg-open", url })
-		end,
+		frontmatter = {
+			enabled = false,
+		},
+		-- Use wiki links by default, markdown links also work
+		link = {
+			style = "wiki",
+		},
 		-- Customize how note IDs are generated (use filename as-is)
 		note_id_func = function(title)
 			local suffix = ""
@@ -45,26 +47,21 @@ return {
 		-- UI settings
 		ui = {
 			enable = true,
-			-- Disable checkbox concealment (fixes text getting cut off)
-			checkboxes = {},
 		},
-		-- Key mappings
-		mappings = {
-			-- Toggle checkbox
-			["<leader>oc"] = {
-				action = function()
-					return require("obsidian").util.toggle_checkbox()
-				end,
-				opts = { buffer = true, desc = "Toggle checkbox" },
-			},
-			-- Follow link
-			["<cr>"] = {
-				action = function()
-					return require("obsidian").util.gf_passthrough()
-				end,
-				opts = { buffer = true, expr = true, desc = "Follow link" },
-			},
+		-- Buffer-local keymaps. The `mappings` option is deprecated; register keymaps
+		-- in the enter_note callback instead.
+		-- See https://github.com/obsidian-nvim/obsidian.nvim/wiki/Keymaps
+		-- Note: <CR> smart action (follow link / toggle checkbox / cycle fold) is
+		-- registered by default, so no longer mapped here.
+		callbacks = {
+			enter_note = function(_note)
+				vim.keymap.set("n", "<leader>oc", "<cmd>Obsidian toggle_checkbox<cr>", {
+					buffer = true,
+					desc = "Toggle checkbox",
+				})
+			end,
 		},
+		legacy_commands = false,
 	},
 	keys = {
 		{ "<leader>oo", "<cmd>ObsidianQuickSwitch<cr>", desc = "Quick switch" },
