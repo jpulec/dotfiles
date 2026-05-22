@@ -7,8 +7,9 @@ Type=simple
 ExecStart=%h/.local/bin/opencode-server.fish
 Restart=on-failure
 RestartSec=2
-Environment=OP_ACCOUNT=createxyz.1password.com
-Environment=BASH_ENV=%h/.config/opencode/fnm-init.sh
+Environment=OP_ACCOUNT={{ .op_account }}
+Environment=BASH_ENV={{ .chezmoi.homeDir }}/.config/opencode/fnm-init.sh
+Environment=OPENCODE_EXPERIMENTAL_OXFMT=true
 
 [Install]
 WantedBy=default.target

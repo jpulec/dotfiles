@@ -1,9 +1,5 @@
-local default_schemas = nil
-local status_ok, jsonls_settings = pcall(require, "nlspsettings.jsonls")
-if status_ok then
-	default_schemas = jsonls_settings.get_default_schemas()
-end
-
+-- Custom schemas are prepended so they take priority over SchemaStore's defaults
+-- when a fileMatch collides (jsonls uses the first match).
 local schemas = {
 	{
 		description = "TypeScript compiler configuration file",
@@ -187,30 +183,25 @@ local schemas = {
 	},
 }
 
-local function extend(tab1, tab2)
-	for _, value in ipairs(tab2 or {}) do
-		table.insert(tab1, value)
+-- jsonls uses the first schema that matches a given file, so prepending
+-- our custom list lets us override SchemaStore defaults without filtering.
+local function get_schemas()
+	local ok, schemastore = pcall(require, "schemastore")
+	if not ok then
+		return schemas
 	end
-	return tab1
+	local merged = vim.list_extend({}, schemas)
+	vim.list_extend(merged, schemastore.json.schemas())
+	return merged
 end
-
-local extended_schemas = extend(schemas, default_schemas)
 
 return {
 	cmd = { "vscode-json-languageserver", "--stdio" },
 	filetypes = { "json", "jsonc", "rc", "swcrc" },
 	settings = {
 		json = {
-			schemas = extended_schemas,
-		},
-	},
-	setup = {
-		commands = {
-			Format = {
-				function()
-					vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line("$"), 0 })
-				end,
-			},
+			schemas = get_schemas(),
+			validate = { enable = true },
 		},
 	},
 }

@@ -1,0 +1,53 @@
+#!/usr/bin/env fish
+
+# Launcher for opencode systemd user service. Pulls API keys from 1Password
+# via the desktop CLI integration, then exec's `opencode serve`.
+#
+# This script is started by ~/.config/systemd/user/opencode.service at boot
+# (or login). At that point, 1Password desktop may not yet be unlocked, so we
+# poll until `op read` succeeds rather than failing-and-restarting which
+# spams the journal.
+
+set --global --export OP_ACCOUNT {{ .op_account }}
+
+set --local anthropic_path "op://{{ .op_vault }}/Anthropic API Key/credential"
+set --local openai_path    "op://{{ .op_vault }}/OpenAI API Key/credential"
+
+# Total wait budget: ~5 minutes (60 iterations * 5s). After that, exit nonzero
+# so systemd shows a real failure rather than hanging forever.
+set --local max_attempts 60
+set --local sleep_seconds 5
+
+set --local anthropic_key ""
+set --local openai_key ""
+set --local logged_waiting 0
+
+for attempt in (seq $max_attempts)
+    set anthropic_key (op read --account $OP_ACCOUNT --no-newline $anthropic_path 2>/dev/null)
+    set openai_key    (op read --account $OP_ACCOUNT --no-newline $openai_path 2>/dev/null)
+
+    if test -n "$anthropic_key"; and test -n "$openai_key"
+        break
+    end
+
+    if test $logged_waiting -eq 0
+        echo "Waiting for 1Password desktop to unlock so we can read API keys..." >&2
+        set logged_waiting 1
+    end
+
+    sleep $sleep_seconds
+end
+
+if test -z "$anthropic_key"; or test -z "$openai_key"
+    echo "Failed to read API keys from 1Password after $max_attempts attempts." >&2
+    echo "Is 1Password desktop running and unlocked? Account: $OP_ACCOUNT" >&2
+    exit 1
+end
+
+if test $logged_waiting -eq 1
+    echo "1Password unlocked, starting opencode." >&2
+end
+
+set --local --export ANTHROPIC_API_KEY $anthropic_key
+set --local --export OPENAI_API_KEY $openai_key
+exec opencode serve --port 4096 --hostname 127.0.0.1

@@ -30,6 +30,30 @@
 - Reference upstream behavior when it is relevant and available.
 - Call out whether feedback is blocking or follow-up.
 
+# Git
+
+## Worktree Layout
+
+Most of my projects are laid out as a parent directory containing a bare repo in `.git/` with worktrees as sibling directories alongside it. Concretely, something like:
+
+```
+my-project/
+├── .git/          # bare repo (shared)
+├── main/          # worktree for main
+├── feature-a/     # worktree
+└── feature-b/     # worktree
+```
+
+The important consequence: **all worktrees share a single stash, reflog, and index lock.** That means parallel opencode instances working in different worktrees of the same project can step on each other if they all use `git stash` / `git stash pop` blindly — one instance can pop another instance's stash and silently corrupt that worktree's state.
+
+## Stash Rules
+
+- **Never use anonymous `git stash` / `git stash pop`** in these projects. The unnamed stash is shared across all worktrees and is unsafe under parallel agents.
+- **Always use named stashes** via `git stash push --message "<descriptive-name>"`, and pop them by their stash ref (e.g. `git stash pop stash@{0}` only after confirming via `git stash list` that the top entry is yours, or better, by matching on the message).
+- Prefer scoping the stash name with the worktree/branch so it's obvious whose it is, e.g. `git stash push --message "wt:feature-a:wip-refactor"`.
+- Before popping, run `git stash list` and grep for your message to find the right ref instead of assuming `stash@{0}`.
+- If you can avoid stashing entirely (e.g. by committing a WIP commit on the branch and resetting later), prefer that — it's worktree-local and immune to this class of bug.
+
 # Available Tools
 
 You have access to a number of command line tools that you can call such as:
@@ -40,11 +64,15 @@ You have access to a number of command line tools that you can call such as:
 - `fastmod`
 
 ## Commands
-You should generally prefer running commands based on local scripts, such as shell script files or npm scripts. Prefer this over using a tool like `npx`.
+You should generally prefer running commands based on local scripts, such as shell script files or npm scripts. That way you'll get the specific version installed for a given project. You almost always should do this instead of calling `npx`.
 
 ## Github
 
 You have github access via the github CLI (`gh`). Most of the time, if you get a github url, it's probably in a private repo and you should use the CLI instead of trying to fetch a github url directly.
+
+## AWS
+
+The AWS CLI (`aws`) is available, but it has no default credentials. You **must** pass `--profile <name>` on every invocation, otherwise the call will fail with a credentials error. If you don't know which profile to use, ask before running the command rather than guessing.
 
 # Typescript Rules
 

@@ -1,0 +1,63 @@
+# Global defaults. We deliberately do NOT set a default IdentityFile here, so
+# every host either matches a more specific block below or falls back to the
+# default SSH_AUTH_SOCK (OpenSSH agent). This prevents the work key from
+# being offered to every random host you ssh into.
+Host *
+    AddKeysToAgent yes
+
+# =============================================================================
+# Work hosts -- use the 1Password SSH agent
+# =============================================================================
+# Work keys live in the 1Password vault. They're only available while 1Password
+# is unlocked. If 1Password is unavailable, work hosts won't connect -- this is
+# intentional (correct behavior, not a bug).
+
+# GitHub default: assume `git@github.com:...` URLs are work. For personal
+# repos, rewrite the remote to use the `github-personal` alias defined below.
+Host github.com
+    HostName github.com
+    User git
+    IdentityAgent ~/.1password/agent.sock
+    IdentitiesOnly yes
+
+# Explicit work alias, useful for disambiguation:
+#   git remote set-url origin git@github-work:create-inc/some-repo.git
+Host github-work
+    HostName github.com
+    User git
+    IdentityAgent ~/.1password/agent.sock
+    IdentitiesOnly yes
+
+# Create infrastructure
+Host *.create.xyz create-*
+    IdentityAgent ~/.1password/agent.sock
+    IdentitiesOnly yes
+
+# =============================================================================
+# Personal hosts -- use OpenSSH agent + on-disk keys
+# =============================================================================
+# Personal keys stay in ~/.ssh/ and are managed by the OpenSSH user agent
+# (XDG_RUNTIME_DIR/ssh-agent.socket). They keep working even if 1Password is
+# closed/unavailable.
+
+# Explicit personal alias for GitHub:
+#   git remote set-url origin git@github-personal:jpulec/some-repo.git
+# Uses a dedicated key (~/.ssh/id_github_personal). The key has a passphrase --
+# OpenSSH agent will prompt for it on first use per session, then cache.
+Host github-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_github_personal
+    IdentitiesOnly yes
+
+# AUR (Arch User Repository)
+Host AUR aur.archlinux.org
+    HostName aur.archlinux.org
+    User aur
+    IdentityFile ~/.ssh/id_aur
+    IdentitiesOnly yes
+
+# DigitalOcean droplets
+Host *.digitalocean.com
+    IdentityFile ~/.ssh/id_ed25519_digitalocean
+    IdentitiesOnly yes

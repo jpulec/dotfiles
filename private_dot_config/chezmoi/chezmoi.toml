@@ -4,9 +4,24 @@
   command = "nvim"
   args = ["-d", "{{ .Destination }}", "{{ .Source }}", "{{ .Target }}"]
 
+# 1Password CLI integration. Enables template functions like
+# `onepasswordRead "op://Vault/Item/field"` for embedding secret values into
+# rendered files at chezmoi-apply time. Not currently used by any template
+# (see opencode-server.fish.tmpl for the alternative pattern: fetch at runtime
+# rather than embed at apply time -- preferred to avoid plaintext on disk).
+[onepassword]
+  command = "op"
+  mode = "account"
+
 # Personal values referenced from templates in dotfiles source. Add new entries
 # here when introducing a new {{ .foo }} reference in a *.tmpl file. Other
 # machines need their own values populated; defaults could be set in source
 # templates via `{{ .ngrok_user | default "" }}` if forking is a goal.
 [data]
   ngrok_user = "jpulec"
+
+  # 1Password account + vault used by opencode-server.fish for API key fetch.
+  # Set per-machine: on a personal-only machine, point at a personal account
+  # and a vault you control.
+  op_account = "createxyz.1password.com"
+  op_vault   = "Employee"
