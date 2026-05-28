@@ -36,15 +36,12 @@
   command = "op"
   mode = "account"
 
-# Personal values referenced from templates in dotfiles source. Add new entries
-# here when introducing a new {{ .foo }} reference in a *.tmpl file. Other
-# machines need their own values populated; defaults could be set in source
-# templates via `{{ .ngrok_user | default "" }}` if forking is a goal.
-[data]
-  ngrok_user = "jpulec"
-
-  # 1Password account + vault used by opencode-server.fish for API key fetch.
-  # Set per-machine: on a personal-only machine, point at a personal account
-  # and a vault you control.
-  op_account = "createxyz.1password.com"
-  op_vault   = "Employee"
+# Personal data overrides. Defaults ship in the dotfiles repo's
+# .chezmoidata.toml file -- only add entries here when this machine differs
+# from those defaults.
+#
+# Example (uncomment to override):
+#   [data]
+#     ngrok_user = "different-handle"
+#     op_account = "personal.1password.com"
+#     op_vault   = "Private"

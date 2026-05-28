@@ -1,0 +1,14 @@
+# Default values for template variables.
+#
+# These ship with the dotfiles repo so `chezmoi init` works on a fresh machine
+# without any prior setup -- templates resolve against these values, then any
+# `[data]` block in ~/.config/chezmoi/chezmoi.toml takes precedence.
+#
+# Override per-machine by adding entries to chezmoi.toml's [data] section.
+
+ngrok_user = "jpulec"
+
+# 1Password account and vault used by opencode-server.fish.
+# Override per-machine for personal/work splits.
+op_account = "createxyz.1password.com"
+op_vault   = "Employee"

@@ -136,15 +136,46 @@ if command -q doppler
     end
 end
 
-# ---- install ---------------------------------------------------------------
+# ---- install (detached, runs in the background) ----------------------------
+#
+# The install (typically `yarn install` + heavy postinstall codegen/build:types)
+# is the slowest step by far. We detach it so the new shell drops into the
+# worktree immediately. A desktop notification fires when it finishes.
 
 if test -n "$WT_INSTALL_CMD"
-    printf "  … Running %s (this may take a moment)...\n" "$WT_INSTALL_CMD"
-    if direnv exec "$worktree_path" fish -c "cd '$worktree_path' && $WT_INSTALL_CMD" >/dev/null 2>&1
-        printf "\r\e[A\e[K  \e[1;32m✓\e[0m Ran %s\n" "$WT_INSTALL_CMD"
-    else
-        printf "\r\e[A\e[K  \e[1;33m⚠\e[0m %s failed (run manually)\n" "$WT_INSTALL_CMD"
-    end
+    set --local log_dir "$HOME/.cache/wt-workspace"
+    mkdir -p "$log_dir"
+    set --local log_file "$log_dir/$repo_name-$worktree_name.log"
+
+    # Escape single quotes in the install command for safe embedding in the
+    # single-quoted fish -c payload below.
+    set --local install_cmd_escaped (string replace --all "'" "'\\''" -- "$WT_INSTALL_CMD")
+
+    # Wrap the install in a fish script that:
+    #   1. cd's into the worktree
+    #   2. runs the install via `direnv exec` so the per-worktree env loads
+    #   3. fires notify-send with success/failure when done
+    set --local payload "cd '$worktree_path'; \
+        printf '[%s] starting: %s\n' (date '+%H:%M:%S') '$install_cmd_escaped'; \
+        if direnv exec '$worktree_path' fish -c '$install_cmd_escaped'; \
+            printf '[%s] done\n' (date '+%H:%M:%S'); \
+            notify-send --app-name=wt-workspace --icon=dialog-information \
+                'wt-workspace: $worktree_name ready' \
+                'Install finished in $worktree_name ($repo_name)'; \
+        else; \
+            printf '[%s] FAILED\n' (date '+%H:%M:%S'); \
+            notify-send --app-name=wt-workspace --urgency=critical --icon=dialog-error \
+                'wt-workspace: $worktree_name install failed' \
+                'See $log_file'; \
+        end"
+
+    # Detach: nohup + & + disown so the job survives this terminal closing.
+    nohup fish -c "$payload" >"$log_file" 2>&1 &
+    disown
+
+    printf "  \e[1;32m✓\e[0m Started \e[1m%s\e[0m in background\n" "$WT_INSTALL_CMD"
+    printf "      log: \e[2m%s\e[0m\n" "$log_file"
+    printf "      you'll get a notification when it finishes\n"
 end
 
 printf "\n"

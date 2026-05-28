@@ -1,5 +1,11 @@
 #**/package-lock.json diff=nodiff
 
+# drizzle-kit generated files (per-migration snapshots + journal)
+**/drizzle/**/snapshot.json diff=nodiff
+**/drizzle/meta/_journal.json diff=nodiff
+**/drizzle/meta/*_snapshot.json diff=nodiff
+
+
 # mergiraf merge driver
 *.java merge=mergiraf
 *.properties merge=mergiraf
