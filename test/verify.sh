@@ -1,6 +1,12 @@
 #!/bin/bash
 # verify.sh - Verify dotfiles installed correctly
 
+# Add user-local bin to PATH. Some tools (notably fnm and opencode) install
+# themselves under ~/.local/bin and ~/.opencode/bin and rely on fish to add
+# those paths via fish_user_paths -- but verify.sh runs in non-interactive
+# bash, which doesn't read fish_variables.
+export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$PATH"
+
 PASS=0
 FAIL=0
 
