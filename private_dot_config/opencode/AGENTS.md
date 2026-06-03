@@ -74,6 +74,30 @@ You have github access via the github CLI (`gh`). Most of the time, if you get a
 
 The AWS CLI (`aws`) is available, but it has no default credentials. You **must** pass `--profile <name>` on every invocation, otherwise the call will fail with a credentials error. If you don't know which profile to use, ask before running the command rather than guessing.
 
+# Chezmoi Conventions
+
+Personal config is managed by [chezmoi](https://chezmoi.io) across two source repos:
+
+- `~/.local/share/chezmoi` (jpulec/dotfiles) — portable shell/editor/CLI config.
+  `chezmoi apply` must succeed on any platform; fish must start cleanly over
+  SSH, on macOS, etc. Files may reference graphical tools (`hyprctl`,
+  `notify-send`) inside lazy-loaded functions, but loading must never error.
+
+- `~/.local/share/griever` (jpulec/griever) — Arch + Hyprland bootstrap.
+  Assumes specific packages installed. Touched rarely after machine setup.
+
+When adding new templated values, prefer **`.chezmoidata.toml`** at the
+dotfiles source root for defaults (loaded before templates render — no need
+for `| default "..."` clutter). Personal overrides go in
+`~/.config/chezmoi/chezmoi.toml`'s `[data]` block.
+
+For SSH, **`github.com` routes to the work key via 1Password agent**. Personal
+GitHub access uses `git@github-personal:jpulec/...` (alias defined in
+`~/.ssh/config`, key at `~/.ssh/id_github_personal`).
+
+The starship prompt shows `!cz` on the right when either chezmoi source has
+uncommitted changes. The `chezdiff` fish abbreviation shows the drift.
+
 # Typescript Rules
 
 ## Rules

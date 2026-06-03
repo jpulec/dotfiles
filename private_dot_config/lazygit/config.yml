@@ -5,6 +5,25 @@ gui:
   # auto-stacks the diff panel vertically on narrow screens
   mainPanelSplitMode: flexible
   showBottomLine: false
+  # Dracula-coordinated palette: matches starship, nvim, btop, foot, bat.
+  theme:
+    activeBorderColor:
+      - "#ff79c6"          # pink
+      - bold
+    inactiveBorderColor:
+      - "#6272a4"          # comment
+    optionsTextColor:
+      - "#8be9fd"          # cyan
+    selectedLineBgColor:
+      - "#44475a"          # current
+    cherryPickedCommitBgColor:
+      - "#bd93f9"          # purple
+    cherryPickedCommitFgColor:
+      - "#282a36"          # bg
+    unstagedChangesColor:
+      - "#ff5555"          # red
+    defaultFgColor:
+      - "#f8f8f2"          # fg
 
 # don't make us press enter to return after subprocess commands (e.g. our `D` difftastic binding)
 promptToReturnFromSubprocess: false
