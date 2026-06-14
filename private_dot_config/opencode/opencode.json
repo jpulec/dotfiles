@@ -2,7 +2,70 @@
   "$schema": "https://opencode.ai/config.json",
   "layout": "stretch",
   "snapshot": false,
-  "plugin": ["@mohak34/opencode-notifier@0.1.10"],
+  "mcp": {
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "--interactive",
+        "--rm",
+        "--env",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "--env",
+        "GITHUB_TOOLSETS",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_PERSONAL_ACCESS_TOKEN}",
+        "GITHUB_TOOLSETS": "context,repos,issues,pull_requests,actions"
+      },
+      "enabled": true
+    },
+    "linear": {
+      "type": "remote",
+      "url": "https://mcp.linear.app/mcp",
+      "enabled": true
+    },
+    "cloudwatch": {
+      "type": "local",
+      "command": ["uvx", "awslabs.cloudwatch-mcp-server@latest"],
+      "enabled": true
+    },
+    "clickhouse": {
+      "type": "remote",
+      "url": "https://mcp.clickhouse.cloud/mcp",
+      "enabled": true
+    },
+    "slack": {
+      "type": "local",
+      "command": ["npx", "-y", "slack-mcp-server@latest", "--transport", "stdio"],
+      "environment": {
+        "SLACK_MCP_XOXP_TOKEN": "{env:SLACK_MCP_XOXP_TOKEN}"
+      },
+      "enabled": true
+    }
+  },
+  "tools": {
+    "github_*": false
+  },
+  "agent": {
+    "build": {
+      "tools": {
+        "github_*": true
+      }
+    },
+    "plan": {
+      "tools": {
+        "github_*": true
+      }
+    }
+  },
   "formatter": {
     "biome": {
       "disabled": true
@@ -25,8 +88,9 @@
       "du*": "allow",
       "echo*": "allow",
       "fastmod*": "allow",
+      "fd*": "allow",
       "file*": "allow",
-      "find*": "ask",
+      "find*": "allow",
       "gh issue view*": "allow",
       "gh pr checks*": "allow",
       "gh pr diff*": "allow",
@@ -36,19 +100,24 @@
       "gh run list*": "allow",
       "gh run view*": "allow",
       "gh search*": "allow",
-      "git add*": "deny",
+      "git add*": "allow",
       "git blame*": "allow",
       "git branch --show-current": "allow",
+      "git commit": "allow",
       "git diff*": "allow",
       "git log*": "allow",
       "git ls-files*": "allow",
       "git ls-tree*": "allow",
       "git merge-base*": "allow",
       "git show*": "allow",
+      "git stash list*": "allow",
       "git status*": "allow",
+      "git symbolic-ref*": "allow",
       "git worktree list": "allow",
       "grep*": "allow",
       "head*": "allow",
+      "hunk session*": "allow",
+      "hunk skill path": "allow",
       "jq*": "allow",
       "ls*": "allow",
       "mkdir*": "allow",
@@ -62,14 +131,21 @@
       "pwd*": "allow",
       "rg*": "allow",
       "sed*": "allow",
+      "setsid --fork footclient*": "allow",
       "sg *": "allow",
       "sort*": "allow",
       "sudo*": "deny",
       "tail*": "allow",
       "time*": "allow",
+      "tmux split-window*": "allow",
       "tsgo*": "allow",
       "wc*": "allow",
-      "yarn *": "allow"
+      "yarn *": "allow",
+      "uniq*": "allow",
+      "unzip*": "allow"
+    },
+    "external_directory": {
+      "/tmp": "allow"
     }
   }
 }

@@ -1,61 +1,59 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-set -euo pipefail
-
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "Not inside a git repository."
-  exit 1
-fi
-
-base_branch="$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')"
-if [[ -z "$base_branch" ]]; then
-  if git show-ref --verify --quiet refs/heads/main; then
-    base_branch="main"
-  elif git show-ref --verify --quiet refs/heads/master; then
-    base_branch="master"
-  else
-    echo "Could not determine default base branch (origin/HEAD, main, or master)."
-    exit 1
-  fi
-fi
-
-current_branch="$(git branch --show-current)"
-
-echo "Using base branch: $base_branch"
+# Fetch all branches and prune remote-tracking branches that no longer exist
 git fetch --all --prune
 
-branches="$({
-  git branch --format='%(refname:short)' \
-    | grep -v "^${base_branch}$" \
-    | grep -v '^_' \
-    | grep -v "^${current_branch}$"
-} || true)"
+# Store the current branch
+original_branch=$(git branch --show-current)
 
-if [[ -z "$branches" ]]; then
-  echo "No local branches found for cleanup."
+# Get a list of all local branches, excluding 'main' and branches that start with '_'
+branches=$(git branch --format="%(refname:short)" | grep -v '^main$' | grep -v '^_')
+
+if [ -z "$branches" ]; then
+  echo "No branches found for cleanup."
   exit 0
 fi
 
+# Iterate over each branch and check if it contains any commits not in 'main'
 for branch in $branches; do
-  unique_commits="$(git rev-list --count "$branch" "^${base_branch}")"
+  # Check if branch has any unique commits compared to 'main'
+  unique_commits=$(git rev-list --count $branch ^main)
 
-  if [[ "$unique_commits" -eq 0 ]]; then
-    echo "Branch '$branch' is fully included in '$base_branch' and can be deleted."
-    read -r -p "Delete branch '$branch'? (y/n): " choice
-    if [[ "$choice" == "y" ]]; then
-      git branch --delete "$branch"
+  if [ "$unique_commits" -eq 0 ]; then
+    # No unique commits, offer to delete
+    echo "Branch '$branch' is fully included in 'main' and can be deleted."
+    read -p "Do you want to delete branch '$branch'? (y/n): " choice
+    if [ "$choice" = "y" ]; then
+      git branch -d "$branch"
       echo "Deleted branch '$branch'."
     else
       echo "Skipped branch '$branch'."
     fi
   else
-    echo "Branch '$branch' has $unique_commits unique commit(s) not in '$base_branch'."
-    echo "Showing diff for '${base_branch}...${branch}':"
-    git --no-pager diff --color=always "${base_branch}...${branch}" || true
+    # Unique commits exist, show the diff as if 'main' was merged into the branch
+    echo "Branch '$branch' has $unique_commits unique commit(s) not in 'main'."
+    echo "Showing the diff between 'main' and '$branch' as if 'main' was merged into '$branch':"
 
-    read -r -p "Delete branch '$branch' despite unique commits? (y/n): " choice
-    if [[ "$choice" == "y" ]]; then
-      git branch --delete --force "$branch"
+    # Switch to the branch
+    git checkout "$branch" > /dev/null 2>&1
+
+    # Perform a merge without committing, to simulate the merge
+    git merge --no-commit --no-ff main
+
+    # Show the colored diff for the merge result
+    git diff main --color
+
+    # Abort the merge to return to the original branch state
+    git merge --abort
+
+    # Switch back to the original branch
+    git checkout "$original_branch" > /dev/null 2>&1
+
+    # Offer to delete the branch after showing the diff
+    read -p "Do you want to delete branch '$branch' despite unique commits? (y/n): " choice
+
+    if [ "$choice" = "y" ]; then
+      git branch -D "$branch"
       echo "Deleted branch '$branch'."
     else
       echo "Skipped branch '$branch'."

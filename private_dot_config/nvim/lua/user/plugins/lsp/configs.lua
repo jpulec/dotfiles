@@ -54,12 +54,57 @@ capabilities.textDocument.codeAction.codeActionLiteralSupport = capabilities.tex
 		},
 	}
 
+-- Skip LSP attach for buffers backed by non-file URIs (e.g. diffview://, fugitive://,
+-- gitsigns://). Their buffer names cannot be turned into a valid file:// URI, so when
+-- a server tries to compute workspaceFolders it sends malformed "file:/<relpath>" and
+-- the server rejects the request with InvalidParams ("workspace URI is not a valid
+-- file path: ..."). Returning nil from root_dir (via on_dir(nil)) prevents the start.
+local skip_uri_schemes = {
+	"diffview://",
+	"fugitive://",
+	"gitsigns://",
+	"octo://",
+	"oil://",
+}
+
+local function buf_has_skipped_scheme(bufnr)
+	local name = vim.api.nvim_buf_get_name(bufnr)
+	if name == "" then
+		return false
+	end
+	for _, scheme in ipairs(skip_uri_schemes) do
+		if name:sub(1, #scheme) == scheme then
+			return true
+		end
+	end
+	return false
+end
+
 function M.setup()
 	-- 1) set global defaults applied to every server (no per-server on_attach needed)
 	vim.lsp.config("*", {
 		capabilities = capabilities,
 		-- you can put other global defaults here if you want
 	})
+
+	-- Block LSP attach for diffview://, fugitive://, etc. buffers by wrapping
+	-- vim.lsp.start. We can't rely on LspAttach to detach after the fact —
+	-- by then the malformed workspaceFolders URI has already been sent. We also
+	-- can't rely on each server's root_dir because not every server config uses
+	-- one. Intercepting vim.lsp.start covers every code path that vim.lsp.enable
+	-- and manual starts go through.
+	if not vim.g._user_lsp_start_wrapped then
+		vim.g._user_lsp_start_wrapped = true
+		local orig_start = vim.lsp.start
+		vim.lsp.start = function(config, opts)
+			opts = opts or {}
+			local bufnr = opts.bufnr or vim.api.nvim_get_current_buf()
+			if buf_has_skipped_scheme(bufnr) then
+				return nil
+			end
+			return orig_start(config, opts)
+		end
+	end
 
 	-- Override nvim-lspconfig's oxlint defaults (its lsp/ file clobbers ours via rtp merge order).
 	-- Upstream only matches .oxlintrc.json, .oxlintrc.jsonc, and oxlint.config.ts.

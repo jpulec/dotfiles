@@ -15,6 +15,14 @@ abbr --add gcia git commit -a
 abbr --add gcin git commit -n
 abbr --add gcian git commit -an
 abbr --add gamend git commit --amend
+# AI-assisted commit message generation. Calls Claude with the staged diff and
+# opens the editor pre-filled. See ~/.config/fish/functions/git-commit-ai.fish.
+abbr --add gca git-commit-ai
+
+# AI-assisted PR drafting. Pushes the branch, generates title + description
+# from commits + diff via Claude, then opens `gh pr create` with the result.
+# Pass through extra args (e.g. --draft) to gh.
+abbr --add ghpr gh-pr-ai
 abbr --add gco git checkout
 abbr --add gcob git checkout -b
 abbr --add gswn git -c core.hooksPath=/dev/null switch

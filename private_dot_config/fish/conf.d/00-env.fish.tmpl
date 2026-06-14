@@ -39,6 +39,11 @@ set --global --export LESS "-R --mouse --wheel-lines=3"
 set --global --export SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
 set --global --export GPG_TTY (tty)
 
+# 1Password CLI account shorthand. Referenced by `op read ...` calls in fish
+# functions (git-commit-ai, gh-pr-ai, etc). The desktop CLI integration handles
+# auth; we just need this variable to know which account to query.
+set --global --export OP_ACCOUNT {{ .op_account }}
+
 # `done` notification filter. Patterns are PCRE-style fish regexes matched
 # against the full command line; any match suppresses the notification.
 # Default upstream is just `^git (?!push|pull|fetch)`; we add common

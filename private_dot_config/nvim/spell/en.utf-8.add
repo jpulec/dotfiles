@@ -69,3 +69,8 @@ GitTriggerAction/!
 octokit/!
 findElement
 RadioGroup/!
+Pulumi
+IAM
+OpenID
+AWS
+OIDC

@@ -9,6 +9,22 @@
 - Use collaborative directness in tone (`we should`, `recommended`) instead of rigid or absolute phrasing.
 - For bug work, include reproducible steps, expected result, actual result, and a concrete error example when available.
 
+# Task Tracking (Linear)
+
+When a session begins what looks like a real task (bug fix, feature, refactor, config change — anything that will produce actual work product), propose tracking it in Linear before starting the work:
+
+1. **Ask first.** Confirm with me that this session warrants a Linear issue before searching for or creating one. Never create an issue unprompted. If I decline, skip Linear for the rest of the task.
+2. **Search.** Once confirmed, look for an existing relevant issue (search by keywords from the task; also check open issues assigned to me). Also search the repo's open GitHub PRs (`gh pr list`, `gh search prs`) for in-flight or overlapping work, and call out anything that conflicts before starting.
+3. **Create if missing.** If nothing relevant exists, create an issue in the **Anything** team with a concise title and a description noting it tracks this opencode session, plus the repo/worktree it concerns.
+4. **Claim it.** Assign the issue to me and move it to In Progress (or the team's equivalent started state).
+
+Rules of thumb:
+
+- Skip this entirely (don't even ask) for quick questions, explanations, code reading, or trivial one-off commands — only sessions producing real work need an issue.
+- Personal config, dotfiles, and tooling tweaks (including changes to these rules) usually don't warrant an issue. Lean toward not asking for that kind of work.
+- One issue per session is the norm. If the session pivots to an unrelated task, repeat the check for the new task.
+- If Linear tools are unavailable, say so and continue without blocking the work.
+
 # Coding Preferences
 
 - Preserve existing API behavior unless a change is explicitly requested; call out compatibility breaks before making them.
@@ -16,10 +32,34 @@
 - Keep naming explicit and boring. Prioritize clarity over cleverness.
 - If an upstream implementation already solves the same problem, align with it rather than inventing a new variant.
 
+## Comments
+
+- Default to **no comments**. Clear naming, small functions, and obvious control flow are preferred over inline narration.
+- **Comments should explain _why_, not _what_.** The code already shows what is happening; a good comment captures the reason it has to be that way when that reason is not obvious from reading the code. If you find yourself writing a comment that paraphrases the next line, delete it and improve the naming instead.
+- Do not add comments that restate what the code does, label sections of a function (`// setup`, `// main loop`), summarize a diff, narrate the change being made (`// now using X instead of Y`), or describe what a function does when its name already does that.
+- Comments are warranted only when the code cannot explain itself, and even then they should focus on the _why_:
+  - Non-obvious workarounds — explain the underlying reason (bug, API quirk, ordering constraint) with a link or issue reference when possible.
+  - Subtle invariants or gotchas a careful reader would still miss — explain why the invariant must hold, not just that it does.
+  - `TODO`/`FIXME` markers that include enough context to be actionable (who/what/why, not just "fix this").
+- When editing a file, also remove nearby low-value comments (restating-the-code, stale section headers, "now does X" narration) that fall within the area being changed. Leave comments outside the edited area alone.
+
+# Scope Discipline
+
+Default to the smallest cohesive change that fully solves the stated task and could merge as a single PR. Optimize for easy review and easy rollback.
+
+- **One mergeable unit per session.** Before coding, identify the minimal slice that delivers the request end-to-end. Build exactly that, then stop.
+- **Minimal does not mean partial.** The slice must stand on its own: it builds, tests pass, and it leaves no half-migrated state, dead code, or unwired flags.
+- **If the request needs multiple slices, propose the split before starting.** Recommend which slice to build first and confirm scope; don't silently build the rest.
+- **If scope grows mid-task, stop and re-confirm** instead of quietly growing the diff.
+- **No drive-by changes.** Don't fix adjacent bugs, refactor neighboring code, rename for taste, or bump dependencies unless the task requires it.
+- **Discovered work becomes follow-ups, not scope.** Collect out-of-scope findings and list them at the end of the session; offer to file Linear issues for anything worth tracking.
+- **A pre-existing bug that genuinely blocks the task gets the smallest viable fix,** called out explicitly so it can be reviewed or split out on its own.
+- Litmus test: if the diff can't be described in one sentence, it's probably more than one change.
+
 # Implementation Checklist
 
 - Confirm API and integration compatibility end-to-end (inputs, outputs, naming/casing, enums, nullability).
-- Keep the diff minimal and avoid unrelated refactors unless explicitly requested.
+- Keep the diff to the agreed slice; route out-of-scope findings to follow-ups (see Scope Discipline).
 - For bug fixes, add or update a regression test when practical.
 - Validate changes with project-local scripts before finishing.
 
@@ -69,6 +109,8 @@ You should generally prefer running commands based on local scripts, such as she
 ## Github
 
 You have github access via the github CLI (`gh`). Most of the time, if you get a github url, it's probably in a private repo and you should use the CLI instead of trying to fetch a github url directly.
+
+When creating a PR, always assign me unless told otherwise: `gh pr create --assignee jpulec`.
 
 ## AWS
 
